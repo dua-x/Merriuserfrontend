@@ -9,14 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: {
+          DEFAULT: "var(--background)",
+          hsl: "hsl(var(--background))",
+        },
+        foreground: {
+          DEFAULT: "var(--foreground)",
+          hsl: "hsl(var(--foreground))",
+        },
         'custom-beige': '#A99282',
         'custom-brown': '#262220',
         'custom-white': '#F7F1F0',
         'brown-gray': '#857B74',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
@@ -63,6 +67,6 @@ const config: Config = {
       }
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
 export default config;

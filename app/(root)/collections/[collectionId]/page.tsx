@@ -2,16 +2,11 @@ import ProductCard from "@/app/components/ProductCard";
 import { getCollectionDetails } from "@/lib/action";
 import React from "react";
 
-const CollectionDetails = async ({
-    params,
-}: {
-    params: { collectionId: string };
-}) => {
-    if (!params?.collectionId) {
-        return <p className="text-center text-red-500">Invalid collection ID</p>;
-    }
 
-    const collectionDetails = await getCollectionDetails(params.collectionId);
+const CollectionDetails = async ({ params }: { params: { collectionId: string } }) => {
+    const collectionDetails = await getCollectionDetails(params.collectionId)
+    console.log(collectionDetails)
+
 
     if (!collectionDetails) {
         return <p className="text-center text-gray-500">Loading collection details...</p>;
@@ -44,4 +39,4 @@ const CollectionDetails = async ({
 };
 
 export default CollectionDetails;
-export const dynamic = "force-dynamic";
+

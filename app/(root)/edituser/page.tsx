@@ -58,7 +58,6 @@ const EditUser = () => {
                       userEdit (input: {
                         firstname: "${formdata.firstname}",
                         lastname: "${formdata.lastname}",
-                        email: "${formdata.email}",
                         phonenumber: "${formdata.phonenumber}",
                         wilaya: "${formdata.wilaya}",
                         commune: "${formdata.commune}",
@@ -86,11 +85,11 @@ const EditUser = () => {
     };
 
     return (
-        <form onSubmit={handleEdit} className="m-10 mb-3 max-W-100">
+        <form onSubmit={handleEdit} className="max-w-lg mx-auto p-4">
             <h1 className="text-2xl font-bold text-center mb-6">Edit Your Information</h1>
 
             {/* Grid Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* First Name */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">First Name</label>
@@ -120,7 +119,7 @@ const EditUser = () => {
                 </div>
 
                 {/* Email */}
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Email Address</label>
                     <input
                         type="email"
@@ -186,7 +185,7 @@ const EditUser = () => {
                 </div>
 
                 {/* Adresse */}
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Address</label>
                     <input
                         type="text"
@@ -199,15 +198,13 @@ const EditUser = () => {
                 </div>
 
                 {/* Country (Read-only) */}
-                <div className="mb-3">
-                    <label htmlFor="pays">Country</label>
+                <div className="mb-3 md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700">Country</label>
                     <select
                         id="pays"
-                        className="form-select"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-100 cursor-not-allowed"
                         name="pays"
-                        title="Select your country"
                         value={formdata.pays}
-                        onChange={handleInputChange}
                         disabled
                     >
                         <option value="Algeria">Algeria</option>
@@ -222,11 +219,12 @@ const EditUser = () => {
             {/* Submit Button */}
             <button
                 type="submit"
-                className="w-full mt-4 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                className="w-full mt-4 p-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
             >
                 Update Info
             </button>
         </form>
+
     );
 };
 

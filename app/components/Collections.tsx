@@ -8,8 +8,8 @@ const Collections = async () => {
   const collections = await getCollections();
 
   return (
-    <div className="flex flex-col items-center gap-10 py-8 px-5">
-      <h1 className="text-body-bold">Collections</h1>
+    <div className="flex flex-col items-center gap-10 py-8 px-5 text-center">
+      <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Collections</h1>
       {!collections || collections.length === 0 ? (
         <p className="text-body-bold">No collection found</p>
       ) : (

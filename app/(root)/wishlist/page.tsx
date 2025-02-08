@@ -12,7 +12,7 @@ const Wishlist = async () => {
     return (
         <div className="px-10 py-5">
             <p className="text-heading3-bold my-10">Your Wishlist</p>
-            {wishlist.product.length === 0 ? (
+            {wishlist.wishlist.product.length === 0 ? (
                 <>
                     <p>No items in your wishlist</p>
                     <button
@@ -24,7 +24,7 @@ const Wishlist = async () => {
                 </>
             ) : (
                 <div className="flex flex-wrap justify-center gap-16">
-                    {wishlist.product.map((product: ProductType) => (
+                    {wishlist.wishlist.product.map((product: ProductType) => (
                         <ProductCard key={product._id} product={product} />
                     ))}
                 </div>
