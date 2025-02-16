@@ -14,27 +14,33 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
     const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
-        // Fetch wishlist status on mount
         const checkWishlist = async () => {
             try {
                 const token = localStorage.getItem('authtoken');
                 if (!token) return;
 
+                // Check local cache first (optional)
+                const storedWishlist = sessionStorage.getItem("wishlist");
+                if (storedWishlist) {
+                    const wishlist = JSON.parse(storedWishlist);
+                    setIsLiked(wishlist.includes(product._id));
+                    return;
+                }
+
+                // Fetch wishlist from server
                 const response = await axios.post(
                     `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/wishlists/wishlistGET`,
                     {
                         query: `
-                            query{
-                            wishlistGETByuser{
-                                wishlist{
-                                product{
-                                    name
-                                    description
-
+                            query {
+                                wishlistGETByuser {
+                                    wishlist {
+                                        product {
+                                            _id
+                                        }
+                                    }
                                 }
-                            user{username}}
                             }
-                        }
                         `,
                     },
                     {
@@ -45,10 +51,17 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                     }
                 );
 
-                const wishlistItems = response.data.data.wishlistGETByuser.wishlist;
-                setIsLiked(wishlistItems.product);
+                const wishlistItems: { product: { _id: string } }[] =
+                    response.data.data?.wishlistGETByuser?.wishlist || [];
+
+                // Extract product IDs and store in sessionStorage
+                const wishlistProductIds = wishlistItems.map(item => item.product._id);
+                sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
+
+                // Set the liked state
+                setIsLiked(wishlistProductIds.includes(product._id));
             } catch (err) {
-                console.log("[wishlist_CHECK]", err);
+                console.error("[wishlist_CHECK]", err);
             }
         };
 
@@ -67,7 +80,7 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
             }
 
             const mutation = isLiked
-                ? `mutation { wishlistRemove(input: { product: "${product._id}" }) { message } }`
+                ? `mutation { wishlistdeleteproduct(input: { product: "${product._id}" }) { message } }`
                 : `mutation { wishlistcreate(input: { product: "${product._id}" }) { message } }`;
 
             await axios.post(
@@ -81,9 +94,20 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 }
             );
 
+            // Update session storage to persist state across refreshes
+            const storedWishlist = sessionStorage.getItem("wishlist");
+            let wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+
+            if (isLiked) {
+                wishlist = wishlist.filter((id: string) => id !== product._id);
+            } else {
+                wishlist.push(product._id);
+            }
+
+            sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
             setIsLiked(!isLiked);
         } catch (err) {
-            console.log("[wishlist_POST]", err);
+            console.error("[wishlist_POST]", err);
         }
 
         setLoading(false);

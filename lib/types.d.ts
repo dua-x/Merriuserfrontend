@@ -20,22 +20,22 @@ type ProductType = {
     _id: string;
     name: string;
     description: string;
-    drichDescription: string;
+    richDescription: string;
     images: string[];
     brand: string;
     Price: string;
-    category: string;
-    countInStock: number;
+    category: CollectionType;
+    CountINStock: number;
     rating: number;
     createdAt: string;
     updatedAt: string;
-    isFeatured: boolean;
-    productDetail: ProductDetailType[];
+    IsFeatured: boolean;
+    productdetail: ProductDetailType[];
 };
 
 type UserType = {
     id: string;
-    username: String;
+    username: string;
     wishlist: string[];
     createdAt: string;
     updatedAt: string;
@@ -48,18 +48,17 @@ type OrderItem = {
 };
 
 type OrderType = {
-
     _id: string;
-    orderitems: [OrderItem];
-    adress: String;
-    city: String;
-    postalcode: String;
-    phonenumber: String;
-    status: String;
-    totalprice: Float;
-    quantityOrder: Int;
-    user: User;
-    dateordered: String!
-    createdAt: String;
-    updatedAt: String;
+    orderitems: OrderItem[]; // Corrected from [OrderItem] to OrderItem[]
+    adress: string;
+    city: string;
+    postalcode: string;
+    phonenumber: string;
+    status: string;
+    totalprice: number; // Changed Float to number
+    quantityOrder: number; // Changed Int to number
+    user: UserType; // Changed User to UserType
+    dateordered: string; // Removed String!
+    createdAt: string;
+    updatedAt: string;
 };

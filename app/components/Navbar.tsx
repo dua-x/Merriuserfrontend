@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CircleUserRound, Search, Menu, ShoppingCart, X } from "lucide-react";
+
 import { useState, useEffect } from "react";
 import { handlelog, userCart } from "@/lib/action";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,6 +29,10 @@ const Navbar = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
+                const token = localStorage.getItem('authtoken');
+                if (!token) {
+                    return;
+                }
                 const userData = await handlelog();
                 setUser(userData);
             } catch (error) {
@@ -37,6 +42,10 @@ const Navbar = () => {
 
         const fetchCart = async () => {
             try {
+                const token = localStorage.getItem('authtoken');
+                if (!token) {
+                    return;
+                }
                 const cartData = await userCart();
                 setCart(cartData);
             } catch (error) {
@@ -65,7 +74,8 @@ const Navbar = () => {
             {/* Search Bar (Hidden on Small Screens) */}
             <div className="hidden lg:flex gap-3 border border-grey-2 px-3 py-1 items-center rounded-lg">
                 <input
-                    className="outline-none max-sm:max-w-[120px]"
+
+                    className="bg-transparent border-transparent w-full outline-none text-black focus:border-transparent"
                     placeholder="Search..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -84,7 +94,8 @@ const Navbar = () => {
                 <div className="lg:flex hidden">
                     <Link href={user ? "/Cart" : "/signin"} className="flex items-center gap-2 border rounded-lg px-3 py-1 hover:bg-black hover:text-white">
                         <ShoppingCart />
-                        <p className="text-base-bold">Cart ({cart?.ProductList.length || 0})</p>
+                        <p className="text-base-bold">Cart ({cart?.ProductList?.length || 0})</p>
+
                     </Link>
                 </div>
 
@@ -99,15 +110,15 @@ const Navbar = () => {
 
             {/* Mobile Search Modal */}
             {showSearchModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-11/12 max-w-md shadow-lg">
+                <div className="bg-white/30 fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center drop-shadow-lg z-50">
+                    <div className=" w-full m-12 bg-custom-beige/85  p-6 rounded-lg shadow-xl">
                         <div className="flex justify-between items-center">
                             <h2 className="text-lg font-semibold">Search</h2>
                             <X className="cursor-pointer" onClick={() => setShowSearchModal(false)} />
                         </div>
-                        <div className="mt-4 flex gap-3 border border-gray-300 px-3 py-2 items-center rounded-lg">
+                        <div className="mt-4 bg-white/30 flex gap-3 border border-gray-300 px-3 py-2 items-center rounded-lg">
                             <input
-                                className="w-full outline-none text-black"
+                                className="bg-transparent text-lg font-semibold text-black border-transparent w-full outline-none text-black focus:border-transparent"
                                 placeholder="Search for products..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
@@ -129,7 +140,7 @@ const Navbar = () => {
             {/* Dropdown Menu */}
             {dropdownMenu && (
                 <div className="absolute top-[72px] right-5 flex flex-col gap-4 p-3 rounded-lg border bg-white text-base-bold lg:hidden">
-                    <Link href="/" className="hover:text-red-1">Home</Link>
+                    <Link href={user ? "/" : "/"} className="hover:text-red-1">Home</Link>
                     <Link href={user ? "/wishlist" : "/signin"} className="hover:text-red-1">Wishlist</Link>
                     <Link href={user ? "/orders" : "/signin"} className="hover:text-red-1">Orders</Link>
                     <Link href={user ? "/Cart" : "/signin"} className="flex items-center gap-3 border rounded-lg px-2 py-1 hover:bg-black hover:text-white">
@@ -152,15 +163,15 @@ const Navbar = () => {
                     </div>
                     {user ? (
                         <div>
-                            <div className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:">
+                            <div className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] ">
                                 <Link href="/edituser">Edit Profile</Link>
                             </div>
-                            <div className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64]">
+                            <div className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] ">
                                 <button onClick={handleLogout}>Log out</button>
                             </div>
                         </div>
                     ) : (
-                        <Link href="/signin" className="mt-3 text-center bg-green-500 text-white py-1 rounded-lg hover:bg-green-600">
+                        <Link href="/signin" className="mt-3 text-center bg-custom-beige hover:bg-[#a27a64]  text-white py-1 rounded-lg ">
                             Sign In
                         </Link>
                     )}

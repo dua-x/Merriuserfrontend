@@ -14,8 +14,6 @@ export default function Homepage() {
             <ProductList />
             <Bespoke />
             <Feedback />
-            <ContactUs />
-
         </>
     );
 }

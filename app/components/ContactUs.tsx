@@ -4,7 +4,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 
 const ContactUs = () => {
     return (
-        <footer className="bg-custom-beige text-white py-8 md:py-12 px-4 md:px-6">
+        <footer className="bg-custom-beige text-white py-8 md:py-12 px-4 md:px-6 bottom-0 ">
             <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     {/* Left Section - Contact Info & Social Media */}
