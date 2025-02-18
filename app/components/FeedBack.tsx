@@ -1,5 +1,4 @@
-"use client";
-
+'use client';
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FeedbackByProduct } from "@/lib/action";

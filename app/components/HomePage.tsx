@@ -13,7 +13,7 @@ export default function Homepage() {
             <Collections />
             <ProductList />
             <Bespoke />
-            <Feedback />
+            {/* <Feedback /> */}
         </>
     );
 }

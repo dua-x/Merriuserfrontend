@@ -1,10 +1,8 @@
-"use client";
+'use client';
 import { useState } from "react";
 import HeartFavorite from "./HeartFavorite";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import { createcarte } from "@/lib/action";
-
-
 
 const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
     if (!productInfo) {
@@ -149,6 +147,27 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
                 >
 
                     {selectedStock === 0 ? "Out of Stock" : "Add To Cart"}
+                </button>
+                <button
+                    className={`w-full py-3 rounded-lg font-semibold text-lg transition-all ${selectedStock === 0
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-custom-beige border text-white hover:border-black hover:bg-[#a27a64]"
+                        }`}
+                    disabled={selectedStock === 0}
+                // onClick={
+                //     ()
+                //         =>
+                //         Createorder(
+                //             productInfo._id,
+                //             quantity,
+                //             selectedColor,
+                //             selectedSize,
+                //         )
+                // }
+
+                >
+
+                    {selectedStock === 0 ? "Out of Stock" : "ACHETER MAINTENANT"}
                 </button>
 
 

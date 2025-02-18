@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useRef } from "react";
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "@/lib/action";

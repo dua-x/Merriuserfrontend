@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import axios from "axios";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";

@@ -44,15 +44,18 @@ type UserType = {
 type OrderItem = {
     product: ProductType;
     quantity: number;
-    _id: string;
+    size: string;
+    color: string;
+    priceproduct: number;
 };
 
 type OrderType = {
     _id: string;
     orderitems: OrderItem[]; // Corrected from [OrderItem] to OrderItem[]
     adress: string;
-    city: string;
-    postalcode: string;
+    wilaya: string;
+    commune: string;
+    idorder: string;
     phonenumber: string;
     status: string;
     totalprice: number; // Changed Float to number

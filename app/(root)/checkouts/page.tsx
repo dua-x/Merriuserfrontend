@@ -58,7 +58,6 @@ const Checkout = () => {
     phonenumber: "",
     wilaya: "",
     commune: "",
-    code_postal: "",
     adresse: "",
     pays: "Algeria",
   });
@@ -89,47 +88,6 @@ const Checkout = () => {
     });
   };
 
-  const handleEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-
-    try {
-      const token = localStorage.getItem("authtoken");
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/users/userauth`,
-        {
-          query: `
-                mutation {
-                  userEdit (input: {
-                    firstname: "${formdata.firstname}",
-                    lastname: "${formdata.lastname}",
-                    phonenumber: "${formdata.phonenumber}",
-                    wilaya: "${formdata.wilaya}",
-                    commune: "${formdata.commune}",
-                    code_postal: "${formdata.code_postal}",
-                    adresse: "${formdata.adresse}"
-                  }) {message}
-                }
-            `,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const user = response.data.data.userEdit;
-      setMessage("User information updated successfully!");
-      setTimeout(() => (window.location.href = "/"), 1500);
-    } catch (error) {
-      setError("Failed to update user information.");
-      console.error("Error updating user information:", error);
-    }
-  };
-
   const handleWilayaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const wilaya = e.target.value;
     setSelectedWilaya(wilaya);
@@ -140,11 +98,167 @@ const Checkout = () => {
     }
   };
 
+  const handleOrderCreation = async (e: React.FormEvent) => {
+    e.preventDefault();  // Prevent default form submission
+
+    // Ensure cart and cart.items are valid before proceeding
+    if (!cart || !cart.ProductList || cart.ProductList.length === 0) {
+      setError("Cart is empty.");
+      return;
+    }
+
+    const orderData = {
+      orderitems: cart.ProductList.map((item: any) => ({
+        product: item.Productid._id,
+        quantity: item.quantityselect,
+        color: item.color,
+        size: item.size,
+      })),
+      adress: formdata.adresse,
+      wilaya: formdata.wilaya,
+      commune: formdata.commune,
+      phonenumber: formdata.phonenumber,
+      firstname: formdata.firstname,
+      lastname: formdata.lastname,
+      email: formdata.email
+    };
+
+    try {
+      const token = localStorage.getItem('authtoken');
+      if (token) {
+        // Authenticated user order
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/orderPOST`,
+          {
+            query: `
+              mutation CreateOrder($input: OrderInput!) {
+                createOrder(input: $input) {
+                  user {
+                    _id
+                    username
+                  }
+                  orderitems {
+                    quantity
+                    product{
+                    name}
+                  }
+                  order {
+                    _id
+                    idorder
+                    totalprice
+                    quantityOrder
+                    adress
+                    wilaya
+                    commune
+                    phonenumber
+                    status
+                  }
+                  message
+                }
+              }
+            `,
+            variables: {
+              input: {
+                orderitems: orderData.orderitems,
+                adress: orderData.adress,
+                wilaya: orderData.wilaya,
+                commune: orderData.commune,
+                phonenumber: orderData.phonenumber,
+              },
+            },
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.errors) {
+          setError("There was an error processing the order.");
+        } else {
+          setMessage("Order created successfully!");
+          // Optionally, redirect or clear the cart
+        }
+      } else {
+        // Handle anonymous user order logic here
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/orderPOST`,
+          {
+            query: `
+              mutation CreateOrderAnonym($input: OrderInputAnonym!) {
+                createOrderAnonym(input: $input) {
+                  user {
+                    _id
+                    username
+                  }
+                  orderitems {
+                    quantity
+                    product
+                  }
+                  order {
+                    _id
+                    idorder
+                    totalprice
+                    quantityOrder
+                    adress
+                    wilaya
+                    commune
+                    phonenumber
+                    status
+                  }
+                  message
+                }
+              }
+            `,
+            variables: {
+              input: {
+                firstname: orderData.firstname || "Anonymous",
+                lastname: orderData.lastname || "User",
+                email: orderData.email,
+                orderitems: orderData.orderitems,
+                adress: orderData.adress,
+                commune: orderData.commune,
+                wilaya: orderData.wilaya,
+                phonenumber: orderData.phonenumber,
+              },
+            },
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (response.data.errors) {
+          setError("There was an error processing the order.");
+        } else {
+          setMessage("Order created successfully!");
+          // Optionally, redirect or clear the cart
+        }
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+      setError("There was an issue with your order. Please try again.");
+    }
+  };
+
+
+
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+
   return (
-    <div className="flex flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-3max-lg:flex-col max-sm:px-2">
+
+    <div className="flex flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-2max-lg:flex-col max-sm:px-2">
       <div className="w-2/3 max-lg:w-full">
 
-        <form onSubmit={handleEdit} className="max-w-lg mx-auto p-4">
+        <form onSubmit={handleOrderCreation} className="max-w-lg mx-auto p-4">
+          {error && <div className="text-red-500 mb-4">{error}</div>}
+          {message && <div className="text-green-500 mb-4">{message}</div>}
           <div>
             <h1 className="text-2xl mb-6">Contact</h1>
             <Link href={'/login'}>Open session</Link>
@@ -210,7 +324,7 @@ const Checkout = () => {
             <div className="md:col-span-2">
               <input
                 type="text"
-                name="Adresse"
+                name="adresse"
                 value={formdata.adresse}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -261,7 +375,7 @@ const Checkout = () => {
 
 
           <h1 className="text-2xl mb-6">Paiment</h1>
-          <div className="bg-custom-beige/30 rounded ">
+          <div className="bg-[#C4A484]/40 rounded p-2">
             <h3> Paiement à la livraison </h3>
           </div>
 
@@ -273,34 +387,33 @@ const Checkout = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full mt-4 p-3 bg-custom-beige text-white rounded-md hover:bg-blue-700 transition"
+            className="w-full mt-4 p-3 bg-custom-beige border border-[#A99282]  text-white rounded-md border hover:border-[#a27a64] hover:bg-[#a27a64] transition"
           >
-            Valider le paiment
+            Valider la commande
           </button>
         </form>
       </div >
-      <div>
 
-        <div className="w-full lg:w-1/3 bg-gray-100 p-4 rounded-lg">
-          <h1 className="text-2xl mb-4">Résumé de la commande</h1>
-          {cart?.ProductList?.length > 0 ? (
-            cart.ProductList.map((cartItem: any) => (
-              <Link href={`/products/${cartItem.Productid._id}`} key={cartItem.Productid._id}>
-                <div className="flex items-center gap-4 p-2 border-b">
-                  <Image src={cartItem.Productid.image || "/placeholder.png"} width={80} height={80} className="rounded-lg" alt={cartItem.Productid.name} />
-                  <div>
-                    <p>{cartItem.Productid.name}</p>
-                    <p>{cartItem.Productid.Price} DZD</p>
-                  </div>
+      <div className="w-full lg:w-1/3 bg-[#a27a64]/40 border border-costum-beige p-4 rounded-lg">
+        <h1 className="text-2xl mb-4">Résumé de la commande</h1>
+        {cart?.ProductList?.length > 0 ? (
+          cart.ProductList.map((cartItem: any) => (
+            <Link href={`/products/${cartItem.Productid._id}`} key={cartItem.Productid._id}>
+              <div className="flex items-center gap-4 p-2 border-b">
+                <Image src={cartItem.Productid.image || "/placeholder.png"} width={80} height={80} className="rounded-lg" alt={cartItem.Productid.name} />
+                <div>
+                  <p>{cartItem.Productid.name}</p>
+                  <p>{cartItem.Productid.Price} DZD</p>
                 </div>
-              </Link>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">Your cart is empty.</p>
-          )}
-          <p className="text-lg mt-4">Total Amount: {cart?.total?.toFixed(2) || "0.00"} DZD</p>
-        </div>
-      </div >
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">Your cart is empty.</p>
+        )}
+        <p className="text-lg mt-4">Total Amount: {cart?.total?.toFixed(2) || "0.00"} DZD</p>
+      </div>
+
 
     </div >
   );

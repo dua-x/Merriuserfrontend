@@ -88,195 +88,51 @@ export const handleUserinfo = async () => {
     }
 }
 
-////ORDER
-
-
-export const Createorder = async () => {
-    try {
-        const token = localStorage.getItem('authtoken');
-        if (!token) {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_IPHOST}//StoreAPI/orders/orderPOST`,
-                {
-                    query: `
-                    mutation {
-                    createOrder(input: {
-    
-                        orderitems: [
-                        {
-                            quantity: 5,
-                            product: "67a9c48ecfa94dc08175d5a1",
-                            color :"noir",
-                            size :"l"
-                        },
-                        {
-                            quantity: 5,
-                            product: "676e8ebfd30a64b188a9800b",
-                            color :"noir",
-                            size :"l"
-                        }
-                        ],
-                        adress: "city 0 log",
-                        city: "reghaia",
-                        postalcode: "16036",
-                        phonenumber: "0770090580"
-                    }) {
-                        user {
-                            _id
-                            username
-                        },
-                        orderitems {
-                            quantity
-                            product
-                        },
-                        order {
-                        _id
-                        idorder
-                        totalprice
-                        quantityOrder
-                        adress
-                        city
-                        postalcode
-                        phonenumber
-                        status
-    
-                        }
-    
-    
-                        message
-                    }
-                    }
-    
-                `
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`, // Add token in the Authorization header
-                    }
-                }
-            );
-            return response.data.data.createOrder;
-        } else {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_IPHOST}//StoreAPI/orders/orderPOST`,
-                {
-                    query: `
-                        mutation {
-                            createOrderAnonym(input: {
-                                firstname :"younes"
-                                lastname :"hadli"
-                                orderitems: [
-                                {
-                                    quantity: 10,
-                                    product: "67a9c48ecfa94dc08175d5a1",
-                                    color :"noir",
-                                    size :"l"
-                                },
-                                {
-                                    quantity: 5,
-                                    product: "67a9ddef903477c6c14e1cf1",
-                                    color :"noir",
-                                    size :"l"
-                                }
-                                ],
-                                adress: "city 0 log",
-                                city: "reghaia",
-                                postalcode: "16036",
-                                phonenumber: "0770090580"
-                            }) {
-                                user {
-                                    _id
-                                    username
-                                },
-                                orderitems {
-                                    quantity
-                                    product
-                                },
-                                order {
-                                _id
-                                idorder
-                                totalprice
-                                quantityOrder
-                                adress
-                                city
-                                postalcode
-                                phonenumber
-                                status
-
-                                }
-
-
-                                message
-                            }
-                            }
-
-    
-                `
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`, // Add token in the Authorization header
-                    }
-                }
-            );
-            return response.data.data.createOrderAnonym;
-        }
-
-
-    } catch (error) {
-        console.error("Error creating order :", error);
-        return error;
-    }
-}
-
-
 export const getOrdersByUser = async () => {
     try {
         const token = localStorage.getItem('authtoken');
-
         const response = await axios.post(
             `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/orderGET`,
             {
                 query: `
-                    query {
-                            userorderGET {
-                            order {
-                            _id
-                            orderitems {
-                                _id
-                                quantity
-                                product{
-                                name
-                                productdetail{
-                                color
-                                sizes{
-                                size
-                                }
-                                }
-                                }
-                                createdAt
-                                updatedAt
-                            }
-                            adress
-                            city
-                            postalcode
-                            phonenumber
-                            status
-                            totalprice
-                            quantityOrder
-                            user{
-                                _id
-                                username
-                            }
-                            dateordered
-                            createdAt
-                            updatedAt
-                            }
-                            message
-                            }
-                            }
+        query {
+        userorderGET {
+            order {
+            _id
+            idorder
+            orderitems {
+            _id
+            quantity
+            product{
+
+                name
+                images
+                Price
+            }
+            size 
+            color
+            priceproduct
+            createdAt
+            updatedAt
+            }
+            adress
+            wilaya
+            commune
+            phonenumber
+            status
+            totalprice
+            quantityOrder
+            user{
+                _id
+                username
+            }
+            dateordered
+            createdAt
+            updatedAt
+        }
+        message
+        }
+        }
                 `,
             },
             {
@@ -286,9 +142,7 @@ export const getOrdersByUser = async () => {
                 },
             }
         );
-
-
-        const orders = response.data.data.userorderGET; // Adjust this based on API response structure
+        const orders = response.data.data.userorderGET.order;
         return orders;
     } catch (error) {
         console.error("Error fetching orders:", error);
@@ -302,7 +156,7 @@ export const createcarte = async (
     quantity: number,
     size: string,
     color: string
-        ) => {
+) => {
     try {
         const token = localStorage.getItem("authtoken");
         if (!token) {
@@ -379,6 +233,8 @@ export const userCart = async () => {
                 }
                 quantityselect
                 sum
+                color 
+                size
                 }
                 userid {
                 username
