@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react";
 import ProductCard from "@/app/components/ProductCard";
 import { useRouter } from "next/navigation";
@@ -18,7 +17,7 @@ const Wishlist = () => {
             setLoading(false);
         };
         fetchWishlist();
-    }, []);
+    }, [wishlist]);
 
     if (loading) {
         return (
@@ -42,7 +41,7 @@ const Wishlist = () => {
     return (
         <div className="px-10 py-10 bg-gray-40 min-h-screen">
             <div className="flex items-center justify-between mb-10">
-                <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Your Wishlist <Heart className="inline-block text-red-500"  /></h1>
+                <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Your Wishlist <Heart className="inline-block text-red-500" /></h1>
             </div>
 
             {wishlist && wishlist.product.length === 0 ? (

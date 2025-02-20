@@ -1,7 +1,5 @@
-import Image from "next/image";
 import Collections from "./Collections";
 import ProductList from "./ProductList";
-import ContactUs from "./ContactUs";
 import Feedback from "./FeedBack";
 import Bespoke from "./Bespoke";
 

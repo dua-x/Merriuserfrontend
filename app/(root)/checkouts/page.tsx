@@ -34,7 +34,7 @@ const Checkout = () => {
       }
     };
     fetchCart();
-  }, []);
+  }, [cart]);
 
   const wilayas: { name: string; priceDesktop: number; priceDomicile: number }[] = [
     { name: "Algiers", priceDesktop: 200, priceDomicile: 500 },
@@ -48,8 +48,6 @@ const Checkout = () => {
     Oran: ["Es Senia", "Bir El Djir", "Ain Turk"],
     Constantine: ["El Khroub", "Ali Mendjeli", "Zighoud Youcef"],
   };
-
-
 
   const [formdata, setFormdata] = useState({
     firstname: "",

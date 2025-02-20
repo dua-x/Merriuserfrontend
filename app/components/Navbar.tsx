@@ -10,7 +10,8 @@ const Navbar = () => {
     const [dropdownMenu, setDropdownMenu] = useState(false);
     const [userDropdown, setUserDropdown] = useState(false);
     const [user, setUser] = useState<{ username: string; email: string } | null>(null);
-    const [cart, setCart] = useState<{ ProductList: any[] } | null>(null);
+    const
+        [cart, setCart] = useState<{ ProductList: any[] } | null>(null);
     const [showSearchModal, setShowSearchModal] = useState(false);
     const [query, setQuery] = useState("");
     const pathname = usePathname();
