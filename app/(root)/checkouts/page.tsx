@@ -96,6 +96,42 @@ const Checkout = () => {
     }
   };
 
+
+  const handledeletecart = async () => {
+    try {
+      const token = localStorage.getItem('authtoken');
+      if (!token) {
+        return;
+      }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/carts/cartPOST`,
+        {
+          query: `
+                  mutation {
+                  Deletecartuser{
+                    
+                      
+                      message
+                  }
+              }
+
+          `,
+
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+
+      );
+      return response.data.data.Deletecartuser
+    } catch (error) {
+      console.error('Error deleting cart:', error);
+    }
+  }
+
   const handleOrderCreation = async (e: React.FormEvent) => {
     e.preventDefault();  // Prevent default form submission
 
@@ -175,8 +211,10 @@ const Checkout = () => {
 
         if (response.data.errors) {
           setError("There was an error processing the order.");
-        } else {
+        } else if (response.data.data.createOrder.message === "Order saved successfully") {
           setMessage("Order created successfully!");
+          // Delete the cart after successful order creation
+          await handledeletecart();
           // Optionally, redirect or clear the cart
         }
       } else {

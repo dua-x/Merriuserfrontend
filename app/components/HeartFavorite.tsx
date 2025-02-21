@@ -19,7 +19,6 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 const token = localStorage.getItem('authtoken');
                 if (!token) return;
 
-                // Check local cache first (optional)
                 const storedWishlist = sessionStorage.getItem("wishlist");
                 if (storedWishlist) {
                     const wishlist = JSON.parse(storedWishlist);
@@ -54,17 +53,16 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 const wishlistItems: { product: { _id: string } }[] =
                     response.data.data?.wishlistGETByuser?.wishlist || [];
 
-                // Extract product IDs and store in sessionStorage
                 const wishlistProductIds = wishlistItems.map(item => item.product._id);
                 sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
 
-                // Set the liked state
                 setIsLiked(wishlistProductIds.includes(product._id));
             } catch (err) {
                 console.error("[wishlist_CHECK]", err);
             }
         };
 
+        // Call the function inside useEffect without marking useEffect as async
         checkWishlist();
     }, [product._id]);
 
@@ -94,7 +92,6 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 }
             );
 
-            // Update session storage to persist state across refreshes
             const storedWishlist = sessionStorage.getItem("wishlist");
             let wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
 
