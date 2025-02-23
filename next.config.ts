@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     swcPlugins: [],
   },
   images: {
-    domains: ['meeriproject.onrender.com'],
+    domains: ['res.cloudinary.com'],
   },
   /* other config options here */
 };

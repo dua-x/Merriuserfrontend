@@ -27,13 +27,11 @@ export const handlelog = async () => {
             }
         );
 
-        console.log("Response status:", response.status); // Debugging status
         if (!response.data) {
             throw new Error("Failed to fetch user informations");
         }
 
         const user = response.data.data.userGETById; // Adjust this based on API response structure
-        console.log(user);
         return user;
     } catch (error) {
         console.error("Error fetching user informations :", error);
@@ -73,13 +71,11 @@ export const handleUserinfo = async () => {
             }
         );
 
-        console.log("Response status:", response.status); // Debugging status
         if (!response.data) {
             throw new Error("Failed to fetch user informations");
         }
 
         const user = response.data.data.userGETById; // Adjust this based on API response structure
-        console.log(user);
         return user;
     } catch (error) {
         console.error("Error fetching user informations :", error);
@@ -368,13 +364,12 @@ export const getProducts = async () => {
 
         );
 
-        console.log("Response status:", response.status); // Debugging status
+
         if (!response.data) {
             throw new Error("Failed to fetch products");
         }
 
         const products = response.data.data.productGET; // Adjust this based on API response structure
-        console.log(products);
         return products;
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -411,7 +406,6 @@ export const getProductDetails = async (productId: string) => {
                 }
             `,
         });
-        // console.log(response.data?.data?.productGETById)
         return response.data?.data?.productGETById || null;
     } catch (error) {
         console.error("Error fetching product details:", error);
@@ -479,7 +473,6 @@ export const getCollectionDetails = async (categoryId: string) => {
                 }
             `,
         });
-        console.log(response.data.data.productGETBycategory)
 
         return response.data.data.productGETBycategory || null;
     } catch (error) {
@@ -524,13 +517,11 @@ export const getWishListByUser = async () => {
             }
         );
 
-        console.log("Response status:", response.status); // Debugging status
         if (!response.data) {
             throw new Error("Failed to fetch wishlist");
         }
 
         const products = response.data?.data?.wishlistGETByuser.wishlist; // Adjust this based on API response structure
-        console.log(products);
         return products;
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -633,7 +624,34 @@ export const FeedbackByProduct = async (productID: string) => {
         return null;
     }
 };
+export const FeedbackGET = async () => {
+    try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/feedbacks/feedbackGET`, {
+            query: `
+                query {
+                feedbackGET{
+                    product{
+                        _id
+                        name
+                    }
+                    userfeedback{
+                        user {
+                            username
+                        }
+                        comment
+                        rating
+                    }
+                }
+            }
+            `,
+        });
 
+        return response.data?.data?.feedbackGET || null;
+    } catch (error) {
+        console.error("Error fetching Feedback details:", error);
+        return null;
+    }
+};
 
 export const Deleteuserfeedback = async (productid: string) => {
     try {

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { handleUserinfo } from "@/lib/action";
-import React from 'react'
+import React from 'react';
 import { useRouter } from "next/navigation";
 import { userCart } from "@/lib/action";
 import Link from "next/link";
@@ -15,7 +15,9 @@ const Checkout = () => {
   const [selectedWilaya, setSelectedWilaya] = useState("");
   const [selectedShipping, setSelectedShipping] = useState("desktop");
   const [deliveryPrices, setDeliveryPrices] = useState({ desktop: 0, domicile: 0 });
+  const [wilayaData, setWilayaData] = useState<any[]>([]); // New state for wilaya data
 
+  // Fetch cart data
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -34,20 +36,27 @@ const Checkout = () => {
       }
     };
     fetchCart();
-  }, [cart]);
+  }, []);
 
-  const wilayas: { name: string; priceDesktop: number; priceDomicile: number }[] = [
-    { name: "Algiers", priceDesktop: 200, priceDomicile: 500 },
-    { name: "Oran", priceDesktop: 300, priceDomicile: 600 },
-    { name: "Constantine", priceDesktop: 250, priceDomicile: 550 },
-  ];
-
-  // Explicitly define the type for communes
-  const communes: Record<string, string[]> = {
-    Algiers: ["Bir Mourad Rais", "El Harrach", "Bab El Oued"],
-    Oran: ["Es Senia", "Bir El Djir", "Ain Turk"],
-    Constantine: ["El Khroub", "Ali Mendjeli", "Zighoud Youcef"],
+  // Fetch wilaya and commune data
+  const fetchWilayaData = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/delivery`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching wilaya data:", error);
+      return [];
+    }
   };
+
+  useEffect(() => {
+    const getWilayaData = async () => {
+      const data = await fetchWilayaData();
+      setWilayaData(data);
+    };
+
+    getWilayaData();
+  }, []);
 
   const [formdata, setFormdata] = useState({
     firstname: "",
@@ -63,6 +72,7 @@ const Checkout = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -79,6 +89,7 @@ const Checkout = () => {
     fetchUserData();
   }, []);
 
+  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormdata({
       ...formdata,
@@ -86,17 +97,18 @@ const Checkout = () => {
     });
   };
 
+  // Handle wilaya change
   const handleWilayaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const wilaya = e.target.value;
     setSelectedWilaya(wilaya);
     setFormdata({ ...formdata, wilaya, commune: "" });
-    const selected = wilayas.find((w) => w.name === wilaya);
+    const selected = wilayaData.find((w) => w.wilaya === wilaya);
     if (selected) {
-      setDeliveryPrices({ desktop: selected.priceDesktop, domicile: selected.priceDomicile });
+      setDeliveryPrices({ desktop: selected.stop_desk, domicile: selected.a_domicile });
     }
   };
 
-
+  // Handle delete cart
   const handledeletecart = async () => {
     try {
       const token = localStorage.getItem('authtoken');
@@ -107,16 +119,12 @@ const Checkout = () => {
         `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/carts/cartPOST`,
         {
           query: `
-                  mutation {
-                  Deletecartuser{
-                    
-                      
-                      message
-                  }
+            mutation {
+              Deletecartuser {
+                message
               }
-
+            }
           `,
-
         },
         {
           headers: {
@@ -124,14 +132,14 @@ const Checkout = () => {
             Authorization: `Bearer ${token}`,
           },
         }
-
       );
-      return response.data.data.Deletecartuser
+      return response.data.data.Deletecartuser;
     } catch (error) {
       console.error('Error deleting cart:', error);
     }
-  }
+  };
 
+  // Handle order creation
   const handleOrderCreation = async (e: React.FormEvent) => {
     e.preventDefault();  // Prevent default form submission
 
@@ -173,8 +181,9 @@ const Checkout = () => {
                   }
                   orderitems {
                     quantity
-                    product{
-                    name}
+                    product {
+                      name
+                    }
                   }
                   order {
                     _id
@@ -193,6 +202,7 @@ const Checkout = () => {
             `,
             variables: {
               input: {
+                livprice: 300,
                 orderitems: orderData.orderitems,
                 adress: orderData.adress,
                 wilaya: orderData.wilaya,
@@ -271,6 +281,7 @@ const Checkout = () => {
         if (response.data.errors) {
           setError("There was an error processing the order.");
         } else {
+          // Delete the cart after successful order creation
           setMessage("Order created successfully!");
           // Optionally, redirect or clear the cart
         }
@@ -281,17 +292,9 @@ const Checkout = () => {
     }
   };
 
-
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
   return (
-
     <div className="flex flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-2max-lg:flex-col max-sm:px-2">
       <div className="w-2/3 max-lg:w-full">
-
         <form onSubmit={handleOrderCreation} className="max-w-lg mx-auto p-4">
           {error && <div className="text-red-500 mb-4">{error}</div>}
           {message && <div className="text-green-500 mb-4">{message}</div>}
@@ -312,7 +315,6 @@ const Checkout = () => {
               required
             />
           </div>
-
 
           {/* Grid Layout */}
           <h1 className="text-2xl mb-6">Livraison</h1>
@@ -368,22 +370,23 @@ const Checkout = () => {
               />
             </div>
 
-
             {/* Wilaya */}
             <select name="wilaya" value={formdata.wilaya} onChange={handleWilayaChange} className="w-full p-2 border rounded-md">
               <option value="">Select Wilaya</option>
-              {wilayas.map((wilaya) => (
-                <option key={wilaya.name} value={wilaya.name}>{wilaya.name}</option>
+              {wilayaData.map((wilaya) => (
+                <option key={wilaya.code} value={wilaya.wilaya}>
+                  {`${wilaya.code}-${wilaya.wilaya}`}
+                </option>
               ))}
             </select>
 
+            {/* Commune */}
             <select name="commune" value={formdata.commune} onChange={handleInputChange} className="w-full p-2 border rounded-md mt-3" disabled={!selectedWilaya}>
               <option value="">Select Commune</option>
-              {selectedWilaya && communes[selectedWilaya]?.map((commune) => (
+              {selectedWilaya && wilayaData.find((w) => w.wilaya === selectedWilaya)?.commune.map((commune: string) => (
                 <option key={commune} value={commune}>{commune}</option>
               ))}
             </select>
-
 
             {/* Phone Number */}
             <div className="md:col-span-2">
@@ -396,9 +399,9 @@ const Checkout = () => {
                 placeholder="Phone Number"
               />
             </div>
-
-
           </div>
+
+          {/* Shipping Mode */}
           <h1 className="text-2xl mt-4">Mode d’expédition</h1>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2">
@@ -409,27 +412,23 @@ const Checkout = () => {
             </label>
           </div>
 
-
+          {/* Payment */}
           <h1 className="text-2xl mb-6">Paiment</h1>
           <div className="bg-[#C4A484]/40 rounded p-2">
             <h3> Paiement à la livraison </h3>
           </div>
 
-
-          {/* Error & Success Messages */}
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-          {message && <p className="text-green-500 mt-2">{message}</p>}
-
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full mt-4 p-3 bg-custom-beige border border-[#A99282]  text-white rounded-md border hover:border-[#a27a64] hover:bg-[#a27a64] transition"
+            className="w-full mt-4 p-3 bg-custom-beige border border-[#A99282] text-white rounded-md border hover:border-[#a27a64] hover:bg-[#a27a64] transition"
           >
             Valider la commande
           </button>
         </form>
-      </div >
+      </div>
 
+      {/* Order Summary */}
       <div className="w-full lg:w-1/3 bg-[#a27a64]/40 border border-costum-beige p-4 rounded-lg">
         <h1 className="text-2xl mb-4">Résumé de la commande</h1>
         {cart?.ProductList?.length > 0 ? (
@@ -449,11 +448,8 @@ const Checkout = () => {
         )}
         <p className="text-lg mt-4">Total Amount: {cart?.total?.toFixed(2) || "0.00"} DZD</p>
       </div>
-
-
-    </div >
+    </div>
   );
-}
+};
 
 export default Checkout;
-

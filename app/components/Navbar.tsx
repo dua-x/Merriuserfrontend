@@ -23,7 +23,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             localStorage.setItem('authtoken', '');
-            location.href = '/';
+            router.push('/');
         } catch (error) {
             console.error('Failed to log out:', error);
         }
@@ -75,7 +75,6 @@ const Navbar = () => {
 
     return (
         <>
-            {/* NAVBAR PLUS ÉPURÉE */}
             <div
                 className="
           sticky top-0 z-50 px-4 py-2 shadow-md
@@ -276,12 +275,22 @@ const Navbar = () => {
                         <p className="text-sm text-gray-500">{user ? user.email : 'guest@example.com'}</p>
                     </div>
                     {user ? (
-                        <button
-                            onClick={handleLogout}
-                            className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
-                        >
-                            Log out
-                        </button>
+                        <>
+                            <button
+                                onClick={handleLogout}
+                                className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
+                            >
+                                Log out
+                            </button>
+                            <button
+                                onClick={() => router.push('/edituser')}
+                                className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
+                            >
+                                edit profile
+                            </button>
+
+                        </>
+
                     ) : (
                         <Link
                             href="/signin"

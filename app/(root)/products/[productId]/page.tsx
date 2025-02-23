@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
 import Gallery from "@/app/components/Gallery";
-import Feedback from "@/app/components/FeedBack";
+import ClientReviews from "@/app/components/ClientReviews";
 import { getProductDetails, getCollectionDetails } from "@/lib/action";
 import ProductInfo from "@/app/components/ProductInfo";
 import MightLike from "@/app/components/MightLike";
@@ -68,7 +68,7 @@ const ProductDetails = ({ params }: { params: Promise<{ productId: string }> }) 
             <Comment productid={productId} />
           </div>
           <div className="w-full lg:w-2/3">
-            <Feedback productID={productId} />
+            <ClientReviews productID={productId} />
           </div>
         </div>
       </div>
