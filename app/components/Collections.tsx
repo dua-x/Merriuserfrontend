@@ -37,30 +37,32 @@ const Collections = () => {
   }
 
   return (
-    <div className="w-full px-5 py-8 text-center">
-      <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Collections</h1>
+    <div className="flex flex-col items-center justify-center text-center">
+      <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg m-8">Collections</h1>
 
       {!collections || collections.length === 0 ? (
         <p className="text-red-500 text-center mt-5">No collections found</p>
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mt-8">
-          {collections.map((collection: CollectionType) => (
-            <Link href={`/collections/${collection._id}`} key={collection._id}>
-              <div className="relative shadow-lg rounded-xl overflow-hidden bg-white p-5 hover:scale-105 transition-transform">
-                <img
-                  src={collection.icon}
-                  alt={collection.name}
-                  className="rounded-lg w-full sm:h-64 h-32 object-cover"
-                />
-                <p className="mt-2 text-body font-semibold">{collection.name}</p>
-              </div>
-            </Link>
-          ))}
+        <div className="flex justify-center w-full">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 m-2 md:gap-6 md:m-6 max-w-[90%]">
+            {collections.map((collection: CollectionType) => (
+              <Link href={`/collections/${collection._id}`} key={collection._id}>
+                <div className="relative shadow-[0_4px_10px_#857B74] rounded-xl overflow-hidden from-[#857B74] via-custom-beige to-[#857B74] p-5 hover:scale-105 transition-transform flex flex-col items-center">
+                  <img
+                    src={collection.icon}
+                    alt={collection.name}
+                    className="rounded-lg sm:h-64 h-32 object-cover"
+                  />
+                  <p className="mt-2 text-body font-semibold">{collection.name}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
+
       )}
     </div>
   );
 };
 
 export default Collections;
-

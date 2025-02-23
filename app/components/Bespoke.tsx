@@ -14,7 +14,8 @@ const Bespoke = () => {
                     <p className="mt-2 text-sm">
                         You want something truly unique. We offer a bespoke service, allowing you to design a custom dress tailored just for you.
                     </p>
-                    <button className="mt-4 bg-white text-[#857B74] px-6 py-2 rounded-lg font-bold hover:bg-gray-200">COMMAND NOW</button>
+                    <button className="mt-4 bg-white text-[#857B74] px-6 py-2 rounded-lg font-bold font-semibold border hover:border-custom-brown hover:text-custom-beige transition-colors duration-300"
+                    >COMMAND NOW</button>
                 </div>
             </div>
         </section >

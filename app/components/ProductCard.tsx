@@ -11,8 +11,9 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             <img
                 src={product.images[0] || '/bespoke.jpg'}
                 alt={'Product'}
-                className=" rounded-lg object-cover"
+                className="w-[220px] h-[375px] object-cover rounded-lg"
             />
+
 
 
             <div>
