@@ -369,7 +369,7 @@ export const getProducts = async () => {
             throw new Error("Failed to fetch products");
         }
 
-        const products = response.data.data.productGET; // Adjust this based on API response structure
+        const products = response.data?.data?.productGET || null; // Adjust this based on API response structure
         return products;
     } catch (error) {
         console.error("Error fetching products:", error);
