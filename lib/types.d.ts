@@ -23,7 +23,7 @@ type ProductType = {
     richDescription: string;
     images: string[];
     brand: string;
-    Price: string;
+    Price: number;
     category: CollectionType;
     CountINStock: number;
     rating: number;
