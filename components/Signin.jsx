@@ -19,7 +19,7 @@ export default function SignIn() {
 
     const [error, setError] = useState(''); // State for error messages
     const [message, setMessage] = useState(''); // State for success messages
-
+    const router = useRouter();
     const handleSignIn = async (e) => {
         e.preventDefault(); // Prevent default form submission
         setError(""); // Reset error message
@@ -42,7 +42,7 @@ export default function SignIn() {
             );
             const token = response.data.data.userLogin.token;
             localStorage.setItem('authtoken', token);
-            location.href = '/'
+            router.push('/');
         } catch (error) {
             // Check if error response exists and extract relevant message
             if (error.response) {

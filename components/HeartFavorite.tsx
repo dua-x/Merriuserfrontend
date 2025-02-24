@@ -1,7 +1,6 @@
 'use client';
 import axios from "axios";
 import { Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface HeartFavoriteProps {
@@ -9,7 +8,6 @@ interface HeartFavoriteProps {
 }
 
 const HeartFavorite = ({ product }: HeartFavoriteProps) => {
-    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
 
@@ -50,13 +48,20 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                     }
                 );
 
-                const wishlistItems: { product: { _id: string } }[] =
-                    response.data.data?.wishlistGETByuser?.wishlist || [];
+                const wishlistItems = Array.isArray(response.data.data?.wishlistGETByuser?.wishlist)
+                    ? response.data.data.wishlistGETByuser.wishlist
+                    : [];
 
-                const wishlistProductIds = wishlistItems.map(item => item.product._id);
+                // Safely map product IDs, only if product and _id exist
+                const wishlistProductIds = wishlistItems
+                    .map((item: { product?: { _id?: string } }) => item?.product?._id)
+                    .filter((id: string | undefined): id is string => Boolean(id));
+
                 sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
 
+                // Check if the current product is in the wishlist
                 setIsLiked(wishlistProductIds.includes(product._id));
+
             } catch (err) {
                 console.error("[wishlist_CHECK]", err);
             }

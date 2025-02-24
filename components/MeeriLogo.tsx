@@ -1,4 +1,3 @@
-
 import { playfair } from '@/app/fonts/font'; // le fichier de l'étape 1
 
 export default function MeeriLogo() {
