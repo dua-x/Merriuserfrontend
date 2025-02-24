@@ -40,8 +40,8 @@ const Feedback = () => {
             if (feedbackData) {
                 setFeedbackList(feedbackData);
                 // Flatten the feedback arrays from all products into one
-                const flattened = feedbackData.flatMap(productFeedback =>
-                    productFeedback.userfeedback.map(feedback => ({
+                const flattened = feedbackData.flatMap((productFeedback: FeedbackData) =>
+                    productFeedback.userfeedback.map((feedback: UserFeedback) => ({
                         productName: productFeedback.product.name,
                         productId: productFeedback.product._id,
                         username: feedback.user.username,
@@ -49,6 +49,7 @@ const Feedback = () => {
                         rating: feedback.rating,
                     }))
                 );
+
                 setFlattenedFeedback(flattened);
             }
             setLoading(false);

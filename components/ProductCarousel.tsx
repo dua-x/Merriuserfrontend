@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "./ProductCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const ProductCarousel = ({ products }: { products: ProductType[] }) => {

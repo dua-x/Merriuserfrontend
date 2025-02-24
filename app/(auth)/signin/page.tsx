@@ -1,4 +1,4 @@
-import Signin from "@/app/components/Signin";
+import Signin from "@/components/Signin";
 
 
 export default function SignIn() {

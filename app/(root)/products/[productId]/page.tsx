@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
-import Gallery from "@/app/components/Gallery";
-import ClientReviews from "@/app/components/ClientReviews";
+import Gallery from "@/components/Gallery";
+import ClientReviews from "@/components/ClientReviews";
 import { getProductDetails, getCollectionDetails } from "@/lib/action";
-import ProductInfo from "@/app/components/ProductInfo";
-import MightLike from "@/app/components/MightLike";
-import Comment from "@/app/components/Comment";
+import ProductInfo from "@/components/ProductInfo";
+import MightLike from "@/components/MightLike";
+import Comment from "@/components/Comment";
 
 const ProductDetails = ({ params }: { params: Promise<{ productId: string }> }) => {
-  const { productId } = use(params); // Unwrap the params object
+  const { productId } = use(params);
 
   const [productDetails, setProductDetails] = useState<any>(null);
   const [similarProducts, setSimilarProducts] = useState<any>(null);

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Navbar from "./components/Navbar";
-import ContactUs from "./components/ContactUs";
+import "../globals.css";
+import Navbar from '@/components/Navbar';
+import ContactUs from '@/components/ContactUs';
 
 export const metadata: Metadata = {
   title: "Merri Store",

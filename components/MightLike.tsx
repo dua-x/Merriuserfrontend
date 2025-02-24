@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from "react";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const MightLike = ({ similarProducts }: { similarProducts: any }) => {

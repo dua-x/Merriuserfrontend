@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import { useRouter } from "next/navigation";
 import { getWishListByUser } from "@/lib/action";
 import { Heart, ShoppingBag } from "lucide-react";

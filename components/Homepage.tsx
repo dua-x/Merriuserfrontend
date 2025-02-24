@@ -1,11 +1,11 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import Collections from "@/app/components/Collections";
-import ProductList from "@/app/components/ProductList";
-import Feedback from "@/app/components/FeedBack";
-import Bespoke from "@/app/components/Bespoke";
-import MeeriLogo from "@/app/components/MeeriLogo";
+import Collections from "@/components/Collections";
+import ProductList from "@/components/ProductList";
+import Feedback from "@/components/FeedBack";
+import Bespoke from "@/components/Bespoke";
+import MeeriLogo from "@/components/MeeriLogo";
 import { playfair } from '@/app/fonts/font'; // le fichier de l'étape 1
 
 export default function Homepage() {
@@ -48,7 +48,7 @@ export default function Homepage() {
             </div>
             <ProductList />
             <Bespoke />
-              <Feedback />  
+            <Feedback />
             <Link href="/" className="flex justify-center items-center gap-2 m-8 hover:scale-105 transition-transform duration-200">
                 <MeeriLogo />
             </Link>

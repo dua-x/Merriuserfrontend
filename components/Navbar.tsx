@@ -5,7 +5,7 @@ import { CircleUserRound, Search, Menu, ShoppingCart, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { handlelog, userCart } from '@/lib/action';
 import { usePathname, useRouter } from 'next/navigation';
-import MeeriLogo from '@/app/components/MeeriLogo';
+import MeeriLogo from '@/components/MeeriLogo';
 
 const Navbar = () => {
     const [dropdownMenu, setDropdownMenu] = useState(false);
