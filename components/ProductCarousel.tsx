@@ -2,6 +2,37 @@
 import { useRef, useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { playfair } from "@/app/fonts/font";
+
+const ChevronButton = ({
+    direction,
+    onClick,
+    visible,
+}: {
+    direction: "left" | "right";
+    onClick: () => void;
+    visible: boolean;
+}) => {
+    if (!visible) return null;
+
+    const isLeft = direction === "left";
+
+    return (
+        <button
+            onClick={onClick}
+            className={`absolute ${isLeft ? "left-2" : "right-2"} top-1/2 transform -translate-y-1/2 
+            bg-gradient-to-r from-[#857B74] to-[#6f645b] p-3 rounded-full shadow-lg 
+            hover:scale-110 z-10 hidden md:flex transition-all duration-300 
+            border-2 border-white`}
+        >
+            {isLeft ? (
+                <ChevronLeftIcon className="w-8 h-8 text-white drop-shadow-md" />
+            ) : (
+                <ChevronRightIcon className="w-8 h-8 text-white drop-shadow-md" />
+            )}
+        </button>
+    );
+};
 
 const ProductCarousel = ({ products }: { products: ProductType[] }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -15,7 +46,6 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
         setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
     };
 
-    // Check scroll position on mount and when products change
     useEffect(() => {
         checkScrollPosition();
         const container = containerRef.current;
@@ -26,14 +56,12 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
         }
     }, [products]);
 
-    // Reset scroll position on mount
     useEffect(() => {
         if (containerRef.current) {
             containerRef.current.scrollTo({ left: 0, behavior: "auto" });
         }
     }, []);
 
-    // Listen for window resize events to re-check scroll position
     useEffect(() => {
         window.addEventListener("resize", checkScrollPosition);
         return () => window.removeEventListener("resize", checkScrollPosition);
@@ -41,14 +69,10 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
 
     const scroll = (direction: "left" | "right") => {
         if (containerRef.current) {
-            // Use the first child for measuring width
             const card = containerRef.current.children[0] as HTMLElement;
             if (!card) return;
-            // Here, card.clientWidth should be 220px (as defined by auto-cols-[220px]).
-            // If you need to account for the gap (gap-4 equals 16px), you could add it:
-            // const scrollAmount = direction === "left" ? -(card.clientWidth + 16) : card.clientWidth + 16;
             const scrollAmount =
-                direction === "left" ? -card.clientWidth : card.clientWidth;
+                direction === "left" ? -card.clientWidth * 2 : card.clientWidth * 2;
             containerRef.current.scrollBy({
                 left: scrollAmount,
                 behavior: "smooth",
@@ -57,26 +81,24 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
     };
 
     return (
-        <div className="relative w-full flex flex-col lg:justify-center items-center px-6 py-8 overflow-hidden">
-            <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">
-                Products
+        <div className="relative w-full flex flex-col items-center px-6 py-8 overflow-hidden">
+            <h1 className={`${playfair.className} text-4xl font-bold drop-shadow-lg mt-10 leading-tight 
+                 text-center text-custom-brown`}>
+                Discover Our Product Collection
             </h1>
 
-            <div className="relative w-full max-w-[90%]">
+            <div className="relative w-full max-w-[90%] mt-8">
                 {/* Left Scroll Button */}
-                {canScrollLeft && (
-                    <button
-                        onClick={() => scroll("left")}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#857B74] text-white p-3 rounded-full shadow-md hover:bg-[#6f645b] z-10 hidden md:flex transition-all duration-300"
-                    >
-                        <ChevronLeftIcon className="w-8 h-8" />
-                    </button>
-                )}
+                <ChevronButton
+                    direction="left"
+                    onClick={() => scroll("left")}
+                    visible={canScrollLeft}
+                />
 
-                {/* Product Container using grid layout */}
+                {/* Product Container */}
                 <div
                     ref={containerRef}
-                    className="grid grid-flow-col auto-cols-[220px] items-center gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full "
+                    className="grid grid-flow-col auto-cols-[220px] items-center gap-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full py-4"
                     style={{ scrollPaddingLeft: "16px" }}
                 >
                     {products.length === 0 ? (
@@ -87,7 +109,7 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
                         products.map((product) => (
                             <div
                                 key={product._id}
-                                className="snap-center flex justify-center items-center"
+                                className="snap-center shadow-md rounded-lg bg-white flex justify-center items-center transition-transform hover:scale-105"
                             >
                                 <ProductCard product={product} />
                             </div>
@@ -96,18 +118,15 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
                 </div>
 
                 {/* Right Scroll Button */}
-                {canScrollRight && (
-                    <button
-                        onClick={() => scroll("right")}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#857B74] text-white p-3 rounded-full shadow-md hover:bg-[#6f645b] z-10 hidden md:flex transition-all duration-300"
-                    >
-                        <ChevronRightIcon className="w-8 h-8" />
-                    </button>
-                )}
+                <ChevronButton
+                    direction="right"
+                    onClick={() => scroll("right")}
+                    visible={canScrollRight}
+                />
             </div>
 
             {/* Mobile Swipe Instruction */}
-            <div className="mt-3 text-center text-gray-500 text-sm md:hidden animate-bounce">
+            <div className="mt-4 text-center text-gray-500 text-sm md:hidden animate-pulse">
                 Swipe left or right to explore →
             </div>
         </div>

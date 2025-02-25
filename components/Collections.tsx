@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getCollections } from "@/lib/action";
+import { playfair } from "@/app/fonts/font";
 
 const Collections = () => {
   const [collections, setCollections] = useState<CollectionType[]>([]);
@@ -38,7 +39,11 @@ const Collections = () => {
 
   return (
     <div className="flex flex-col items-center justify-center text-center">
-      <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg m-8">Collections</h1>
+      <h1 className={`${playfair.className} text-3xl font-bold drop-shadow-lg mt-10 leading-tight tracking-wide 
+      text-center text-2xl font-semibold text-custom-brown drop-shadow-lg`}>
+
+        Discover Our Collections
+      </h1>
 
       {!collections || collections.length === 0 ? (
         <p className="text-red-500 text-center mt-5">No collections found</p>

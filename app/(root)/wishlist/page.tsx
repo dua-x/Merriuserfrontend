@@ -39,9 +39,11 @@ const Wishlist = () => {
     }
 
     return (
-        <div className="px-10 py-10 bg-gray-40 min-h-screen">
+        <div className="px-6 lg:px-20 py-10 bg-gray-40 min-h-screen max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-10">
-                <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Your Wishlist <Heart className="inline-block text-red-500" /></h1>
+                <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">
+                    Your Wishlist <Heart className="inline-block text-red-500" />
+                </h1>
             </div>
 
             {wishlist && wishlist.product.length === 0 ? (
@@ -49,15 +51,15 @@ const Wishlist = () => {
                     <p className="text-lg text-gray-500">No items in your wishlist yet.</p>
                     <button
                         className="mt-6 flex items-center gap-2 border rounded-lg text-lg font-medium bg-[#C4A484] text-white py-3 px-6 hover:bg-[#a98c68] transition"
-                        onClick={() => router.push("/shop")}
+                        onClick={() => router.push("/#collections")}
                     >
                         <ShoppingBag /> Start Shopping
                     </button>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                     {wishlist?.product.map((product: ProductType) => (
-                        <div key={product._id} className="relative shadow-lg rounded-xl overflow-hidden bg-white p-5 hover:scale-105 transition-transform">
+                        <div key={product._id} className="relative shadow-lg rounded-xl overflow-hidden bg-white p-5 transition-transform transform hover:scale-105">
                             <ProductCard product={product} />
                         </div>
                     ))}
