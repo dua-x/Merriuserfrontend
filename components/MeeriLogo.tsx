@@ -1,3 +1,4 @@
+
 import { playfair } from '@/app/fonts/font'; // le fichier de l'étape 1
 
 export default function MeeriLogo() {
@@ -6,7 +7,8 @@ export default function MeeriLogo() {
             <h1
                 className={`
           ${playfair.className} 
-          text-5xl 
+          text-4xl 
+          m-1
           md:text-5xl 
           font-bold 
           leading-tight 
@@ -21,7 +23,8 @@ export default function MeeriLogo() {
           ${playfair.className} 
           text-sm 
           md:text-base 
-          tracking-[0.25em]
+          md:tracking-[0.25em]
+          tracking-[0.15em]
           uppercase
           
         `}

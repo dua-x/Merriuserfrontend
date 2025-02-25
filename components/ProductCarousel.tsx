@@ -76,7 +76,7 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
                 {/* Product Container using grid layout */}
                 <div
                     ref={containerRef}
-                    className="grid grid-flow-col auto-cols-[220px] items-center gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full max-w-[1000px]"
+                    className="grid grid-flow-col auto-cols-[220px] items-center gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full "
                     style={{ scrollPaddingLeft: "16px" }}
                 >
                     {products.length === 0 ? (
