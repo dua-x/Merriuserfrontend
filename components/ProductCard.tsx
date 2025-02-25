@@ -30,7 +30,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             {/* Prix et favori en bas à droite */}
             <div className='absolute top-4 right-4 flex flex-col items-end space-y-1'>
                 <p className='bg-custom-beige/40 text-white text-lg font-semibold px-2 py-1 rounded-md'>
-                    ${product.Price ?? 'N/A'}
+                    DZD {product.Price ?? 'N/A'}
                 </p>
                 <HeartFavorite product={product} key={product._id} />
             </div>
