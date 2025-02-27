@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignIn() {
     const [formdata, setFormdata] = useState({
@@ -9,16 +10,17 @@ export default function SignIn() {
         password: ""
     });
 
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+    const router = useRouter();
+
     const handleInputChange = (e) => {
         setFormdata({
             ...formdata,
             [e.target.name]: e.target.value
         });
     };
-
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
-    const router = useRouter();
 
     const handleSignIn = async (e) => {
         e.preventDefault(); 
@@ -65,19 +67,19 @@ export default function SignIn() {
         <form onSubmit={handleSignIn}>
             <div className="form-container">
                 <div className="form-card">
-                    <h1>Sign In</h1>
+                    <h1 className="text-xl font-semibold mb-4">Sign In</h1>
 
                     {error && (
-                        <p style={{ color: "red" }}>
+                        <p className="text-red-500">
                             {error} <br />
                             No account?{" "}
-                            <a href="/signup" style={{ color: "blue", textDecoration: "underline" }}>
+                            <a href="/signup" className="text-blue-600 underline">
                                 Sign up here
                             </a>
                             .
                         </p>
                     )}
-                    {message && <p style={{ color: "green" }}>{message}</p>}
+                    {message && <p className="text-green-500">{message}</p>}
 
                     <div className="mb-3">
                         <label>Email address</label>
@@ -91,16 +93,25 @@ export default function SignIn() {
                         />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-3 relative">
                         <label>Password</label>
-                        <input
-                            name="password"
-                            type="password"
-                            className="form-control"
-                            placeholder="Enter password"
-                            onChange={handleInputChange}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="form-control pr-10"
+                                placeholder="Enter password"
+                                onChange={handleInputChange}
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-500"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="d-grid">
@@ -109,9 +120,9 @@ export default function SignIn() {
                         </button>
                     </div>
 
-                    <p className="form-link p-4">
+                    <p className="form-link text-center mt-4">
                         Not yet registered?{" "}
-                        <a href="/signup" style={{ color: "blue", textDecoration: "underline" }}>
+                        <a href="/signup" className="text-blue-600 underline">
                             Sign up
                         </a>
                     </p>

@@ -344,7 +344,6 @@ export const getProducts = async () => {
 
         const response = await axios.post(
             `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
-
             {
                 query: `
           query {

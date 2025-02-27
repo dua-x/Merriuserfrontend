@@ -2,22 +2,26 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUp() {
-    const [formdata, setformdata] = useState({
+    const [formdata, setFormdata] = useState({
         email: "",
         password: "",
+        confirmPassword: "",
         firstname: "",
         lastname: "",
     });
 
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const router = useRouter();
 
-    const handleInputchange = (e) => {
-        setformdata({
+    const handleInputChange = (e) => {
+        setFormdata({
             ...formdata,
             [e.target.name]: e.target.value,
         });
@@ -27,6 +31,12 @@ export default function SignUp() {
         e.preventDefault();
         setError("");
         setMessage("");
+
+        // Password match validation
+        if (formdata.password !== formdata.confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
 
         try {
             const response = await axios.post(
@@ -61,7 +71,6 @@ export default function SignUp() {
             if (error.response && error.response.data) {
                 const errorMessage = error.response.data.errors[0]?.message || "An error occurred.";
 
-                // Check if the account already exists and redirect to Sign In page
                 if (errorMessage.toLowerCase().includes("already exists")) {
                     setError("An account with this email already exists. Redirecting to Sign In...");
                     router.push("/signin");
@@ -78,7 +87,7 @@ export default function SignUp() {
         <form onSubmit={handleSignup}>
             <div className="form-container">
                 <div className="form-card">
-                    <h1>Sign Up</h1>
+                    <h1 className="text-xl font-semibold mb-4">Sign Up</h1>
 
                     <div className="mb-3">
                         <label>First name</label>
@@ -88,7 +97,7 @@ export default function SignUp() {
                             className="form-control"
                             placeholder="First name"
                             value={formdata.firstname}
-                            onChange={handleInputchange}
+                            onChange={handleInputChange}
                         />
                     </div>
                     <div className="mb-3">
@@ -99,7 +108,7 @@ export default function SignUp() {
                             className="form-control"
                             placeholder="Last name"
                             value={formdata.lastname}
-                            onChange={handleInputchange}
+                            onChange={handleInputChange}
                         />
                     </div>
                     <div className="mb-3">
@@ -110,19 +119,50 @@ export default function SignUp() {
                             className="form-control"
                             placeholder="Enter email"
                             value={formdata.email}
-                            onChange={handleInputchange}
+                            onChange={handleInputChange}
                         />
                     </div>
-                    <div className="mb-3">
+                    
+                    <div className="mb-3 relative">
                         <label>Password</label>
-                        <input
-                            name="password"
-                            type="password"
-                            className="form-control"
-                            placeholder="Enter password"
-                            value={formdata.password}
-                            onChange={handleInputchange}
-                        />
+                        <div className="relative">
+                            <input
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="form-control pr-10"
+                                placeholder="Enter password"
+                                value={formdata.password}
+                                onChange={handleInputChange}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mb-3 relative">
+                        <label>Confirm Password</label>
+                        <div className="relative">
+                            <input
+                                name="confirmPassword"
+                                type={showConfirmPassword ? "text" : "password"}
+                                className="form-control pr-10"
+                                placeholder="Confirm password"
+                                value={formdata.confirmPassword}
+                                onChange={handleInputChange}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                            >
+                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="d-grid">
@@ -131,12 +171,12 @@ export default function SignUp() {
                         </button>
                     </div>
 
-                    {message && <p className="success-message" style={{ color: "green" }}>{message}</p>}
-                    {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
+                    {message && <p className="success-message text-green-500">{message}</p>}
+                    {error && <p className="error-message text-red-500">{error}</p>}
 
-                    <p className="form-link" style={{ textAlign: "center", marginTop: "10px" }}>
+                    <p className="form-link text-center mt-4">
                         Already registered?{" "}
-                        <a href="/signin" style={{ color: "blue", textDecoration: "underline" }}>
+                        <a href="/signin" className="text-blue-600 underline">
                             Sign in
                         </a>
                     </p>
