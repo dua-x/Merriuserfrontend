@@ -143,7 +143,7 @@ const Cart = () => {
         );
     }
 
-    if (!cart || cart?.ProductList?.length === 0) return  <div className="flex flex-col items-center text-center">
+    if (!cart || cart?.ProductList?.length === 0) return  <div className="flex flex-col h-screen justify-center items-center ">
     <p className="text-lg text-gray-500">No items in your cart yet.</p>
     <button
         className="mt-6 flex items-center gap-2 border rounded-lg text-lg font-medium bg-[#C4A484] text-white py-3 px-6 hover:bg-[#a98c68] transition"

@@ -9,7 +9,6 @@ import Link from "next/link";
 import Image from "next/image";
 
 const Checkout = () => {
-  const router = useRouter();
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedWilaya, setSelectedWilaya] = useState("");

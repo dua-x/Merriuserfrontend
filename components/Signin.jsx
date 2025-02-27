@@ -48,7 +48,7 @@ export default function SignIn() {
                 setMessage("Signed in successfully! ...");
                 setTimeout(() => {
                     router.push('/');
-                }, 500);
+                }, 2000);
             } else {
                 setError(loginData.message || "Invalid email or password.");
             }
