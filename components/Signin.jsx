@@ -1,29 +1,29 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Use Next.js's router for navigation
+import { useRouter } from "next/navigation"; 
 import axios from "axios";
 
-
 export default function SignIn() {
-
-    const [formdata, setformdata] = useState({
+    const [formdata, setFormdata] = useState({
         email: "",
         password: ""
     });
-    const handleInputchange = (e) => {
-        setformdata({
+
+    const handleInputChange = (e) => {
+        setFormdata({
             ...formdata,
             [e.target.name]: e.target.value
-        })
-    }
+        });
+    };
 
-    const [error, setError] = useState(''); // State for error messages
-    const [message, setMessage] = useState(''); // State for success messages
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const router = useRouter();
+
     const handleSignIn = async (e) => {
-        e.preventDefault(); // Prevent default form submission
-        setError(""); // Reset error message
-        setMessage(""); // Reset success message
+        e.preventDefault(); 
+        setError(""); 
+        setMessage(""); 
 
         try {
             const response = await axios.post(
@@ -40,13 +40,21 @@ export default function SignIn() {
                     `
                 }
             );
-            const token = response.data.data.userLogin.token;
-            localStorage.setItem('authtoken', token);
-            router.push('/');
+
+            const loginData = response.data.data.userLogin;
+            
+            if (loginData.token) {
+                localStorage.setItem('authtoken', loginData.token);
+                setMessage("Signed in successfully! ...");
+                setTimeout(() => {
+                    router.push('/');
+                }, 500);
+            } else {
+                setError(loginData.message || "Invalid email or password.");
+            }
         } catch (error) {
-            // Check if error response exists and extract relevant message
             if (error.response) {
-                setError(error.response.data.data.userLogin.message || "An error occurred");
+                setError(error.response.data.data.userLogin.message || "An error occurred.");
             } else {
                 setError("Failed to sign in. Please try again later.");
             }
@@ -59,8 +67,17 @@ export default function SignIn() {
                 <div className="form-card">
                     <h1>Sign In</h1>
 
-                    {error && <p style={{ color: "red" }}>{error}</p>} {/* Display error message */}
-                    {message && <p style={{ color: "green" }}>{message}</p>} {/* Display success message */}
+                    {error && (
+                        <p style={{ color: "red" }}>
+                            {error} <br />
+                            No account?{" "}
+                            <a href="/signup" style={{ color: "blue", textDecoration: "underline" }}>
+                                Sign up here
+                            </a>
+                            .
+                        </p>
+                    )}
+                    {message && <p style={{ color: "green" }}>{message}</p>}
 
                     <div className="mb-3">
                         <label>Email address</label>
@@ -69,7 +86,7 @@ export default function SignIn() {
                             type="email"
                             className="form-control"
                             placeholder="Enter email"
-                            onChange={handleInputchange}
+                            onChange={handleInputChange}
                             required
                         />
                     </div>
@@ -81,7 +98,7 @@ export default function SignIn() {
                             type="password"
                             className="form-control"
                             placeholder="Enter password"
-                            onChange={handleInputchange}
+                            onChange={handleInputChange}
                             required
                         />
                     </div>
@@ -91,8 +108,12 @@ export default function SignIn() {
                             Sign In
                         </button>
                     </div>
-                    <p className="form-link">
-                        Not yet registered? <a href="/signup">Sign up</a>
+
+                    <p className="form-link p-4">
+                        Not yet registered?{" "}
+                        <a href="/signup" style={{ color: "blue", textDecoration: "underline" }}>
+                            Sign up
+                        </a>
                     </p>
                 </div>
             </div>

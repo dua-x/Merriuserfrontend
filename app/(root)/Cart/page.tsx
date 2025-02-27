@@ -3,6 +3,7 @@ import { MinusCircle, PlusCircle, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { userCart, DeleteProductFromCart } from "@/lib/action";
+import {ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
@@ -142,7 +143,15 @@ const Cart = () => {
         );
     }
 
-    if (!cart || cart?.ProductList?.length === 0) return <p>No items in cart</p>;
+    if (!cart || cart?.ProductList?.length === 0) return  <div className="flex flex-col items-center text-center">
+    <p className="text-lg text-gray-500">No items in your cart yet.</p>
+    <button
+        className="mt-6 flex items-center gap-2 border rounded-lg text-lg font-medium bg-[#C4A484] text-white py-3 px-6 hover:bg-[#a98c68] transition"
+        onClick={() => router.push("/#collections")}
+    >
+        <ShoppingBag /> Start Shopping
+    </button>
+</div>;
 
     return (
         <div className="flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-3">

@@ -22,13 +22,15 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         try {
-            localStorage.setItem('authtoken', '');
+            localStorage.removeItem('authtoken'); // Clear the token
+            setUser(null); // Reset the user state
+            setCart(null); // Reset the cart state
             router.push('/');
         } catch (error) {
             console.error('Failed to log out:', error);
         }
     };
-
+    
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -193,114 +195,82 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* MODAL DE RECHERCHE MOBILE */}
-            {showSearchModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 transition-opacity duration-300">
-                    <div className="w-full m-12 bg-custom-beige/85 p-6 rounded-lg shadow-xl">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-semibold text-black">Search</h2>
-                            <X className="cursor-pointer text-black" onClick={() => setShowSearchModal(false)} />
-                        </div>
-                        <div className="mt-4 bg-white/30 flex gap-3 border border-gray-300 px-3 py-2 items-center rounded-lg">
-                            <input
-                                className="bg-transparent text-lg font-semibold text-black border-transparent w-full outline-none"
-                                placeholder="Search for products..."
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                            />
-                            <button
-                                disabled={query === ''}
-                                onClick={() => {
-                                    router.push(`/search/${query}`);
-                                    setShowSearchModal(false);
-                                }}
-                            >
-                                <Search className="cursor-pointer h-5 w-5 text-gray-600 transition-colors duration-300" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* MENU DE NAVIGATION MOBILE */}
-            {dropdownMenu && (
-                <div
-                    ref={dropdownRef}
-                    className="
-            absolute top-[72px] right-5 z-50 
+{dropdownMenu && (
+    <div
+        ref={dropdownRef}
+        className={`
+            fixed top-[72px] right-5 z-50 
             flex flex-col gap-4 p-3 
             rounded-lg border bg-white text-base-bold 
-            lg:hidden shadow-xl transition-transform duration-300 transform
-            scale-100
-          "
-                >
-                    <Link href="/" className="hover:text-custom-beige transition-colors duration-300">
-                        Home
-                    </Link>
-                    <Link href={user ? '/wishlist' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
-                        Wishlist
-                    </Link>
-                    <Link href={user ? '/orders' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
-                        Orders
-                    </Link>
-                    <Link
-                        href={user ? '/Cart' : '/signin'}
-                        className="
-              flex items-center gap-1 border rounded-md px-2 py-1 
-              hover:bg-custom-beige hover:text-white transition-colors duration-300
+            lg:hidden shadow-xl transition-transform duration-300 
+            ${dropdownMenu ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible'}
+        `}
+    >
+        <Link href="/" className="hover:text-custom-beige transition-colors duration-300">
+            Home
+        </Link>
+        <Link href={user ? '/wishlist' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
+            Wishlist
+        </Link>
+        <Link href={user ? '/orders' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
+            Orders
+        </Link>
+        <Link
+            href={user ? '/Cart' : '/signin'}
+            className="
+                flex items-center gap-1 border rounded-md px-2 py-1 
+                hover:bg-custom-beige hover:text-white transition-colors duration-300
             "
-                    >
-                        <ShoppingCart />
-                        <p className="text-sm">
-                            Cart ({cart?.ProductList?.length || 0})
-                        </p>
-                    </Link>
-                </div>
-            )}
+        >
+            <ShoppingCart />
+            <p className="text-sm">Cart ({cart?.ProductList?.length || 0})</p>
+        </Link>
+    </div>
+)}
 
-            {/* DROPDOWN DU PROFIL UTILISATEUR */}
-            {userDropdown && (
-                <div
-                    ref={userDropdownRef}
-                    className="
-            absolute top-[72px] right-0 z-50 
+{/* DROPDOWN DU PROFIL UTILISATEUR */}
+{userDropdown && (
+    <div
+        ref={userDropdownRef}
+        className={`
+            fixed top-[72px] right-0 z-50 
             flex flex-col gap-2 p-4 w-56 
-            rounded-lg border bg-white shadow-xl transition-transform duration-300 transform
-            scale-100
-          "
+            rounded-lg border bg-white shadow-xl transition-transform duration-300 
+            ${userDropdown ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible'}
+        `}
+    >
+        <div className="flex flex-col items-center text-center">
+            <CircleUserRound className="text-gray-600 w-12 h-12 mb-2" />
+            <p className="font-semibold">{user ? user.username : 'Guest'}</p>
+            <p className="text-sm text-gray-500">{user ? user.email : 'guest@example.com'}</p>
+        </div>
+        {user ? (
+            <>
+                <button
+                    onClick={handleLogout}
+                    className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
                 >
-                    <div className="flex flex-col items-center text-center">
-                        <CircleUserRound className="text-gray-600 w-12 h-12 mb-2" />
-                        <p className="font-semibold">{user ? user.username : 'Guest'}</p>
-                        <p className="text-sm text-gray-500">{user ? user.email : 'guest@example.com'}</p>
-                    </div>
-                    {user ? (
-                        <>
-                            <button
-                                onClick={handleLogout}
-                                className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
-                            >
-                                Log out
-                            </button>
-                            <button
-                                onClick={() => router.push('/edituser')}
-                                className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
-                            >
-                                edit profile
-                            </button>
+                    Log out
+                </button>
+                <button
+                    onClick={() => router.push('/edituser')}
+                    className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
+                >
+                    Edit Profile
+                </button>
+            </>
+        ) : (
+            <Link
+                href="/signin"
+                className="mt-3 text-center bg-custom-beige hover:bg-[#a27a64] text-white py-1 rounded-lg transition-colors duration-300"
+            >
+                Sign In
+            </Link>
+        )}
+    </div>
+)}
 
-                        </>
-
-                    ) : (
-                        <Link
-                            href="/signin"
-                            className="mt-3 text-center bg-custom-beige hover:bg-[#a27a64] text-white py-1 rounded-lg transition-colors duration-300"
-                        >
-                            Sign In
-                        </Link>
-                    )}
-                </div>
-            )}
         </>
     );
 };

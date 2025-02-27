@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Utilisation du routeur de Next.js
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
     const [formdata, setformdata] = useState({
@@ -11,24 +11,26 @@ export default function SignUp() {
         lastname: "",
     });
 
-    const [error, setError] = useState(""); // Gestion des messages d'erreur
-    const [message, setMessage] = useState(""); // Gestion des messages de succès
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+
+    const router = useRouter();
 
     const handleInputchange = (e) => {
         setformdata({
             ...formdata,
-            [e.target.name]: e.target.value, // Mise à jour de l'état
+            [e.target.name]: e.target.value,
         });
     };
 
     const handleSignup = async (e) => {
-        e.preventDefault(); // Empêcher le comportement par défaut
-        setError(""); // Réinitialisation des messages
+        e.preventDefault();
+        setError("");
         setMessage("");
 
         try {
             const response = await axios.post(
-                process.env.NEXT_PUBLIC_IPHOST + "/StoreAPI/users/userauth",
+                `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/users/userauth`,
                 {
                     query: `
                         mutation RegisterUser($input: registerinput!) {
@@ -48,16 +50,26 @@ export default function SignUp() {
                     },
                 }
             );
+
             const { token, message } = response.data.data.userRegister;
-            localStorage.setItem("authtoken", token); // Stocker le token
-            setMessage(message); // Afficher le message de succès
-            location.href = "/"; // Rediriger l'utilisateur
+            localStorage.setItem("authtoken", token);
+            setMessage(message);
+
+            router.push("/signin");
+
         } catch (error) {
-            // Gestion des erreurs
             if (error.response && error.response.data) {
-                setError(error.response.data.errors[0]?.message || "Une erreur est survenue.");
+                const errorMessage = error.response.data.errors[0]?.message || "An error occurred.";
+
+                // Check if the account already exists and redirect to Sign In page
+                if (errorMessage.toLowerCase().includes("already exists")) {
+                    setError("An account with this email already exists. Redirecting to Sign In...");
+                    router.push("/signin");
+                } else {
+                    setError(errorMessage);
+                }
             } else {
-                setError("Impossible de s'inscrire. Veuillez réessayer plus tard.");
+                setError("Unable to register. Please try again later.");
             }
         }
     };
@@ -68,7 +80,6 @@ export default function SignUp() {
                 <div className="form-card">
                     <h1>Sign Up</h1>
 
-                    {/* Champs de saisie */}
                     <div className="mb-3">
                         <label>First name</label>
                         <input
@@ -114,20 +125,20 @@ export default function SignUp() {
                         />
                     </div>
 
-                    {/* Bouton de soumission */}
                     <div className="d-grid">
                         <button type="submit" className="btn btn-primary">
                             Sign Up
                         </button>
                     </div>
 
-                    {/* Messages */}
-                    {message && <p className="success-message">{message}</p>}
-                    {error && <p className="error-message">{error}</p>}
+                    {message && <p className="success-message" style={{ color: "green" }}>{message}</p>}
+                    {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
 
-                    {/* Lien vers la connexion */}
-                    <p className="form-link">
-                        Already registered? <a href="/signin">Sign in</a>
+                    <p className="form-link" style={{ textAlign: "center", marginTop: "10px" }}>
+                        Already registered?{" "}
+                        <a href="/signin" style={{ color: "blue", textDecoration: "underline" }}>
+                            Sign in
+                        </a>
                     </p>
                 </div>
             </div>
