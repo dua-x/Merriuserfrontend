@@ -92,6 +92,13 @@ table.basic a {
     width: 100%;
     height: 100%;
 }
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
 
 @layer base {
     :root {
