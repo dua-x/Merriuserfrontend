@@ -59,8 +59,11 @@ const Wishlist = () => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                     {wishlist?.product.map((product: ProductType) => (
-                        <div key={product._id} className="relative shadow-lg rounded-xl overflow-hidden bg-white p-5 transition-transform transform hover:scale-105">
+                        <div key={product._id}
+                        className="flex justify-center">
+                        <div className=" max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
                             <ProductCard product={product} />
+                        </div>
                         </div>
                     ))}
                 </div>
