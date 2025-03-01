@@ -1,90 +1,72 @@
 "use client";
-import React, { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import ProductCard from "@/components/ProductCard";
+import { useRouter } from "next/navigation";
+import { getWishListByUser } from "@/lib/action";
+import { Heart, ShoppingBag } from "lucide-react";
 
-const Gallery = ({ productImage }: { productImage: string[] }) => {
-    const [mainImage, setMainImage] = useState(productImage[0]);
-    const thumbnailRef = useRef<HTMLDivElement>(null);
+const Wishlist = () => {
+    const router = useRouter();
+    const [wishlist, setWishlist] = useState<{ product: ProductType[] } | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Fonction de défilement pour la liste des miniatures
-    const scroll = (direction: "left" | "right") => {
-        if (thumbnailRef.current) {
-            const scrollAmount = direction === "left" ? -200 : 200;
-            thumbnailRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-        }
-    };
+    useEffect(() => {
+        const fetchWishlist = async () => {
+            const data = await getWishListByUser();
+            setWishlist(data);
+            setLoading(false);
+        };
+        fetchWishlist();
+    }, []); // ✅ Fixed infinite loop
+
+    if (loading) {
+        return (
+            <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                    <div className="absolute w-24 h-24 border-4 border-[#C4A484] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="absolute w-16 h-16 border-4 border-[#857B74] border-t-transparent rounded-full animate-spin-slow"></div>
+                    <span className="text-[#C4A484] font-bold text-2xl tracking-wide">M</span>
+                </div>
+                <p className="mt-6 text-[#857B74] text-lg font-semibold tracking-wide">
+                    Elevating Your Style at
+                    <span className="text-[#C4A484] font-bold"> Merri Store</span>...
+                </p>
+                <p className="mt-2 text-sm text-gray-500 opacity-80 animate-fade-in">
+                    Just a moment, fashion takes time.
+                </p>
+            </div>
+        );
+    }
 
     return (
-        <div className="w-full lg:max-w-6xl mx-auto p-6 rounded-2xl flex flex-col lg:flex-row justify-center items-center h-full gap-6">
-            
-            {/* Miniatures - Conteneur défilable */}
-            <div className="flex flex-col items-center lg:w-[20%] order-2 lg:order-1">
-                
-                <div className="relative w-full">
-                    {/* Boutons de défilement (Visible sur Desktop) */}
-                    {productImage.length > 4 && (
-                        <button
-                            onClick={() => scroll("left")}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-1 rounded-full shadow-md hidden lg:block"
-                        >
-                            <ChevronLeft className="w-6 h-6 text-gray-600" />
-                        </button>
-                    )}
+        <div className="px-6 lg:px-20 py-10 bg-gray-40 min-h-screen max-w-[1600px] mx-auto">
+            <div className="flex items-center justify-between mb-10">
+                <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">
+                    Your Wishlist <Heart className="inline-block text-red-500" />
+                </h1>
+            </div>
 
-                    <div
-                        ref={thumbnailRef}
-                        className={`flex gap-2 lg:gap-3 overflow-x-auto lg:overflow-y-auto w-full h-24 lg:h-auto lg:flex-col scrollbar-hide ${
-                            productImage.length > 4 ? "flex-nowrap" : "flex-wrap"
-                        }`}
-                        style={{
-                            maxWidth: "100%",
-                            whiteSpace: productImage.length > 4 ? "nowrap" : "normal",
-                        }}
+            {wishlist && wishlist.product.length === 0 ? (
+                <div className="flex flex-col items-center text-center">
+                    <p className="text-lg text-gray-500">No items in your wishlist yet.</p>
+                    <button
+                        className="mt-6 flex items-center gap-2 border rounded-lg text-lg font-medium bg-[#C4A484] text-white py-3 px-6 hover:bg-[#a98c68] transition"
+                        onClick={() => router.push("/#collections")}
                     >
-                        {productImage.map((image, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setMainImage(image)}
-                                className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 rounded-lg overflow-hidden transition-transform ${
-                                    mainImage === image ? "border-2 border-black scale-105" : ""
-                                }`}
-                            >
-                                <img
-                                    src={image}
-                                    alt="product thumbnail"
-                                    className="w-full h-full object-cover"
-                                />
-                            </button>
-                        ))}
-                    </div>
-
-                    {productImage.length > 4 && (
-                        <button
-                            onClick={() => scroll("right")}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-1 rounded-full shadow-md hidden lg:block"
-                        >
-                            <ChevronRight className="w-6 h-6 text-gray-600" />
-                        </button>
-                    )}
+                        <ShoppingBag /> Start Shopping
+                    </button>
                 </div>
-                
-                <div className="mt-4 text-center text-gray-500 text-sm md:hidden animate-pulse">
-                    {productImage.length > 4 ? "Glissez pour explorer →" : ""}
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                    {wishlist?.product.map((product: ProductType) => (
+                        <div key={product._id} className="relative shadow-lg rounded-xl overflow-hidden bg-white p-5 transition-transform transform hover:scale-105">
+                            <ProductCard product={product} />
+                        </div>
+                    ))}
                 </div>
-            </div>
-
-            {/* Affichage de l'image principale */}
-            <div className="lg:w-[80%] order-1 lg:order-2 mb-4">
-                <div className="w-full aspect-w-1 aspect-h-1 max-h-[500px]">
-                    <img
-                        src={mainImage}
-                        alt="product"
-                        className="w-full h-full object-contain rounded-lg shadow-xl"
-                    />
-                </div>
-            </div>
+            )}
         </div>
     );
 };
 
-export default Gallery;
+export default Wishlist;
