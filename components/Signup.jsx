@@ -61,11 +61,10 @@ export default function SignUp() {
                 }
             );
 
-            const { token, message } = response.data.data.userRegister;
-            localStorage.setItem("authtoken", token);
-            setMessage(message);
-
-            router.push("/signin");
+            setTimeout(() => {
+                router.push("/signin");
+            }, 200);
+            
 
         } catch (error) {
             if (error.response && error.response.data) {
@@ -73,7 +72,9 @@ export default function SignUp() {
 
                 if (errorMessage.toLowerCase().includes("already exists")) {
                     setError("An account with this email already exists. Redirecting to Sign In...");
-                    router.push("/signin");
+                    setTimeout(() => {
+                        router.push("/signin");
+                    }, 200);
                 } else {
                     setError(errorMessage);
                 }
