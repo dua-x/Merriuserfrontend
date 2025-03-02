@@ -28,17 +28,7 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 const response = await axios.post(
                     `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/wishlists/wishlistGET`,
                     {
-                        query: `
-                            query {
-                                wishlistGETByuser {
-                                    wishlist {
-                                        product {
-                                            _id
-                                        }
-                                    }
-                                }
-                            }
-                        `,
+                        query: `query { wishlistGETByuser { wishlist { product { _id } } } }`,
                     },
                     {
                         headers: {
@@ -48,26 +38,16 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                     }
                 );
 
-                const wishlistItems = Array.isArray(response.data.data?.wishlistGETByuser?.wishlist)
-                    ? response.data.data.wishlistGETByuser.wishlist
-                    : [];
-
-                // Safely map product IDs, only if product and _id exist
-                const wishlistProductIds = wishlistItems
-                    .map((item: { product?: { _id?: string } }) => item?.product?._id)
-                    .filter((id: string | undefined): id is string => Boolean(id));
+                const wishlistItems = response.data.data?.wishlistGETByuser?.wishlist || [];
+                const wishlistProductIds = wishlistItems.map((item: { product?: { _id?: string } }) => item?.product?._id).filter(Boolean);
 
                 sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
-
-                // Check if the current product is in the wishlist
                 setIsLiked(wishlistProductIds.includes(product._id));
-
             } catch (err) {
                 console.error("[wishlist_CHECK]", err);
             }
         };
 
-        // Call the function inside useEffect without marking useEffect as async
         checkWishlist();
     }, [product._id]);
 
@@ -97,6 +77,7 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                 }
             );
 
+            // Update wishlist locally
             const storedWishlist = sessionStorage.getItem("wishlist");
             let wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
 
@@ -108,11 +89,12 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
 
             sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
             setIsLiked(!isLiked);
+            window.dispatchEvent(new Event("wishlistUpdated"));
         } catch (err) {
             console.error("[wishlist_POST]", err);
         }
 
-        setLoading(true);
+        setLoading(false);
     };
 
     return (

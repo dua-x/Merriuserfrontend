@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import { useRouter } from "next/navigation";
@@ -7,17 +7,30 @@ import { Heart, ShoppingBag } from "lucide-react";
 
 const Wishlist = () => {
     const router = useRouter();
-    const [wishlist, setWishlist] = useState<{ product: ProductType[] } | null>(null);
+    const [wishlist, setWishlist] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchWishlist = async () => {
             const data = await getWishListByUser();
-            setWishlist(data);
+            if (data?.product) {
+                setWishlist(data.product);
+                sessionStorage.setItem("wishlist", JSON.stringify(data.product.map((p:ProductType) => p._id)));
+            }
             setLoading(false);
         };
         fetchWishlist();
-    }, []); // ✅ Fixed infinite loop
+
+        const handleWishlistUpdate = () => {
+            fetchWishlist();
+        };
+    
+        window.addEventListener("wishlistUpdated", handleWishlistUpdate);
+    
+        return () => {
+            window.removeEventListener("wishlistUpdated", handleWishlistUpdate);
+        };
+    }, []);
 
     if (loading) {
         return (
@@ -46,7 +59,7 @@ const Wishlist = () => {
                 </h1>
             </div>
 
-            {wishlist && wishlist.product.length === 0 ? (
+            {wishlist.length === 0 ? (
                 <div className="flex flex-col items-center text-center">
                     <p className="text-lg text-gray-500">No items in your wishlist yet.</p>
                     <button
@@ -58,12 +71,11 @@ const Wishlist = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-                    {wishlist?.product.map((product: ProductType) => (
-                        <div key={product._id}
-                        className="flex justify-center">
-                        <div className=" max-w-[240px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-                            <ProductCard product={product} />
-                        </div>
+                    {wishlist.map((product) => (
+                        <div key={product._id} className="flex justify-center">
+                            <div className="max-w-[240px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+                                <ProductCard product={product} />
+                            </div>
                         </div>
                     ))}
                 </div>
