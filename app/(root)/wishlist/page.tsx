@@ -61,7 +61,7 @@ const Wishlist = () => {
                     {wishlist?.product.map((product: ProductType) => (
                         <div key={product._id}
                         className="flex justify-center">
-                        <div className=" max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+                        <div className=" max-w-[240px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
                             <ProductCard product={product} />
                         </div>
                         </div>

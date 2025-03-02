@@ -112,7 +112,7 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
             console.error("[wishlist_POST]", err);
         }
 
-        setLoading(false);
+        setLoading(true);
     };
 
     return (

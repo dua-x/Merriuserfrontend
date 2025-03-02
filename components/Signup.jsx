@@ -61,10 +61,20 @@ export default function SignUp() {
                 }
             );
 
+            const { token, message } = response.data.data.userRegister;
+            localStorage.setItem("authtoken", token);
+           
+
+            if (token!=null) {
+                localStorage.setItem("authtoken", token);
+            setMessage(message);
+
             setTimeout(() => {
                 router.push("/signin");
             }, 200);
-            
+            } else {
+                setError(message );
+            }
 
         } catch (error) {
             if (error.response && error.response.data) {
@@ -72,9 +82,7 @@ export default function SignUp() {
 
                 if (errorMessage.toLowerCase().includes("already exists")) {
                     setError("An account with this email already exists. Redirecting to Sign In...");
-                    setTimeout(() => {
-                        router.push("/signin");
-                    }, 200);
+                    router.push("/signin");
                 } else {
                     setError(errorMessage);
                 }

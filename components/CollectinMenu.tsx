@@ -82,7 +82,7 @@ export default function CollectionsMenu({
     }, [collections, selectedCollectionId]);
 
     return (
-        <div className="w-full px-6 py-8 bg-white rounded-xl shadow-lg">
+        <div className="w-full px-6 pt-8 bg-white rounded-xl shadow-lg">
             {/* Mobile Layout */}
             <div className="md:hidden">
                 <h1 className={`${playfair.className} text-3xl font-bold leading-tight tracking-wide text-center text-2xl font-semibold text-custom-brown`}>
@@ -107,8 +107,8 @@ export default function CollectionsMenu({
                                         ref={isSelected ? selectedRef : null}
                                         className={`flex flex-col items-center cursor-pointer transition-transform transform hover:scale-105 ${isSelected ? "border-b-4 border-blue-500 pb-2" : ""}`}
                                     >
-                                        <div className={`relative ${isSelected ? "w-32 h-32" : "w-24 h-24"} rounded-lg overflow-hidden shadow-md`}>
-                                            <img src={collection.icon} alt={collection.name} style={{ objectFit: "cover" }} />
+ <div className={`relative ${isSelected ? "w-32 h-32" : "w-24 h-24"} rounded-lg overflow-hidden shadow-md`}>
+                                                <img src={collection.icon} alt={collection.name} style={{ objectFit: "cover" }} />
                                         </div>
                                         <p className="mt-2 text-sm font-medium text-gray-700">
                                             {collection.name}
