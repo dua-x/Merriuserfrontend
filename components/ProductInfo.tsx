@@ -73,7 +73,7 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
 
                 <div className="flex gap-2 text-gray-500 text-sm">
                     <p className="font-medium">Category:</p>
-                    <p className="font-semibold text-gray-800">{productInfo.category.name}</p>
+                    <p className="font-semibold text-gray-800">{productInfo.category.name|| 'Uncategorized'}</p>
                 </div>
 
                 {/* Colors */}

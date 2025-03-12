@@ -41,7 +41,6 @@ const Collections = () => {
     <div className="flex flex-col items-center justify-center text-center">
       <h1 className={`${playfair.className} text-3xl font-bold drop-shadow-lg mt-10 leading-tight tracking-wide 
       text-center text-2xl font-semibold text-custom-brown drop-shadow-lg`}>
-
         Discover Our Collections
       </h1>
 
@@ -49,14 +48,14 @@ const Collections = () => {
         <p className="text-red-500 text-center mt-5">No collections found</p>
       ) : (
         <div className="flex justify-center w-full">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 m-2 md:gap-6 md:m-6 max-w-[90%]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 gap-4 m-2 md:gap-6 md:m-6 max-w-[90%]">
             {collections.map((collection: CollectionType) => (
               <Link href={`/collections/${collection._id}`} key={collection._id}>
-                <div className="relative shadow-[0_4px_10px_#857B74] rounded-xl overflow-hidden from-[#857B74] via-custom-beige to-[#857B74] p-5 hover:scale-105 transition-transform flex flex-col items-center">
+                <div className="relative shadow-lg rounded-xl bg-white p-4 hover:scale-105 transition-transform flex flex-col items-center">
                   <img
                     src={collection.icon}
                     alt={collection.name}
-                    className="rounded-lg sm:h-64 h-32 object-cover"
+                    className="rounded-lg aspect-[3/4] object-cover"
                   />
                   <p className="mt-2 text-body font-semibold">{collection.name}</p>
                 </div>
@@ -64,7 +63,6 @@ const Collections = () => {
             ))}
           </div>
         </div>
-
       )}
     </div>
   );

@@ -2,20 +2,42 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FeedbackGET } from "@/lib/action";
+import { playfair } from "@/app/fonts/font";
+
+const ChevronButton = ({
+    direction,
+    onClick,
+    visible,
+}: {
+    direction: "left" | "right";
+    onClick: () => void;
+    visible: boolean;
+}) => {
+    if (!visible) return null;
+
+    return (
+        <button
+            onClick={onClick}
+            className={`absolute top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-lg shadow-lg 
+                transition-transform hover:scale-110 hover:bg-white/30 ${direction === "left" ? "left-4" : "right-4"}`}
+        >
+            {direction === "left" ? (
+                <ChevronLeftIcon className="w-6 h-6 text-white" />
+            ) : (
+                <ChevronRightIcon className="w-6 h-6 text-white" />
+            )}
+        </button>
+    );
+};
 
 interface UserFeedback {
-    user: {
-        username: string;
-    };
+    user: { username: string };
     comment: string;
     rating: number;
 }
 
 interface FeedbackData {
-    product: {
-        name: string;
-        _id: string;
-    };
+    product: { name: string; _id: string };
     userfeedback: UserFeedback[];
 }
 
@@ -32,6 +54,8 @@ const Feedback = () => {
     const [feedbackList, setFeedbackList] = useState<FeedbackData[]>([]);
     const [flattenedFeedback, setFlattenedFeedback] = useState<FlattenedFeedback[]>([]);
     const [loading, setLoading] = useState(true);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
 
     useEffect(() => {
         const fetchFeedback = async () => {
@@ -39,7 +63,6 @@ const Feedback = () => {
             const feedbackData = await FeedbackGET();
             if (feedbackData) {
                 setFeedbackList(feedbackData);
-                // Flatten the feedback arrays from all products into one
                 const flattened = feedbackData.flatMap((productFeedback: FeedbackData) =>
                     productFeedback.userfeedback.map((feedback: UserFeedback) => ({
                         productName: productFeedback.product.name,
@@ -49,21 +72,34 @@ const Feedback = () => {
                         rating: feedback.rating,
                     }))
                 );
-
                 setFlattenedFeedback(flattened);
             }
             setLoading(false);
         };
-
         fetchFeedback();
     }, []);
+
+    useEffect(() => {
+        const checkScroll = () => {
+            if (!containerRef.current) return;
+            const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+            setCanScrollLeft(scrollLeft > 0);
+            setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
+        };
+
+        checkScroll();
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener("scroll", checkScroll);
+            return () => container.removeEventListener("scroll", checkScroll);
+        }
+    }, [flattenedFeedback]);
 
     const scroll = (direction: "left" | "right") => {
         if (containerRef.current) {
             const cardWidth = containerRef.current.children[0]?.clientWidth || 250;
-            const gap = 16;
             containerRef.current.scrollBy({
-                left: direction === "left" ? -(cardWidth + gap) : cardWidth + gap,
+                left: direction === "left" ? -cardWidth * 2 : cardWidth * 2,
                 behavior: "smooth",
             });
         }
@@ -78,44 +114,43 @@ const Feedback = () => {
     }
 
     return (
-        <section className="relative w-full items-center justify-center my-8 text-center">
-            <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Feedback Corner</h1>
-            <div className="relative flex items-center justify-center">
-                <button
-                    onClick={() => scroll("left")}
-                    className="absolute left-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
-                >
-                    <ChevronLeftIcon className="w-6 h-6" />
-                </button>
+        <section className="relative w-full flex flex-col items-center py-10 overflow-hidden">
+            <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown drop-shadow-lg text-center`}>
+                Vos Avis
+            </h1>
+
+            <div className="relative w-full max-w-5xl mt-8">
+                <ChevronButton direction="left" onClick={() => scroll("left")} visible={canScrollLeft} />
 
                 <div
                     ref={containerRef}
-                    className="flex overflow-x-auto gap-4 px-4 scrollbar-hide snap-x snap-mandatory scroll-smooth w-full items-center"
+                    className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth gap-6 px-8 py-6"
                 >
                     {flattenedFeedback.map((feedback, index) => (
                         <div
                             key={index}
-                            className="snap-center shrink-0 w-[300px] h-[180px] bg-custom-beige text-white p-5 rounded-lg shadow-md flex flex-col "
+                            className="snap-center w-80 bg-custom-beige/70 backdrop-blur-lg shadow-xl rounded-xl p-5 flex flex-col 
+                            transition-transform hover:scale-105 border border-white/30"
                         >
-                            <h2 className="text-xl font-semibold text-white">
-                                {feedback.productName}
-                            </h2>
-                            <p className="text-lg font-semibold">{feedback.username}</p>
-                            <p className="text-sm italic">{feedback.comment}</p>
-                            <p className="text-yellow-500">{"⭐".repeat(feedback.rating)}</p>
+                            <h2 className="text-lg font-bold text-white">{feedback.productName}</h2>
+                            <p className="text-md font-semibold text-gray-200">@{feedback.username}</p>
+                            <p className="text-sm italic text-gray-300">{feedback.comment}</p>
+                            <p className="text-yellow-400 mt-2">{"⭐".repeat(feedback.rating)}</p>
                         </div>
                     ))}
                 </div>
 
-                <button
-                    onClick={() => scroll("right")}
-                    className="absolute right-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
-                >
-                    <ChevronRightIcon className="w-6 h-6" />
-                </button>
+                <ChevronButton direction="right" onClick={() => scroll("right")} visible={canScrollRight} />
             </div>
-            <div className="mt-3 text-center text-gray-500 text-sm md:hidden animate-bounce">
-                Swipe left or right to explore →
+
+            <div className="mt-4 flex gap-2">
+                {flattenedFeedback.map((_, index) => (
+                    <span key={index} className="h-2 w-2 bg-gray-500 rounded-full opacity-50"></span>
+                ))}
+            </div>
+
+            <div className="mt-4 text-center text-gray-400 text-sm md:hidden animate-pulse">
+                Glissez pour voir plus →
             </div>
         </section>
     );

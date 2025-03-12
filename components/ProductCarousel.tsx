@@ -21,14 +21,14 @@ const ChevronButton = ({
         <button
             onClick={onClick}
             className={`absolute ${isLeft ? "left-2" : "right-2"} top-1/2 transform -translate-y-1/2 
-            bg-gradient-to-r from-[#857B74] to-[#6f645b] p-3 rounded-full shadow-lg 
-            hover:scale-110 z-10 hidden md:flex transition-all duration-300 
-            border-2 border-white`}
+            bg-gradient-to-r from-[#857B74] to-[#6f645b] p-2 rounded-full shadow-md 
+            opacity-60 hover:opacity-100 transition-all duration-300 
+            border border-white z-10 hidden md:flex`}
         >
             {isLeft ? (
-                <ChevronLeftIcon className="w-8 h-8 text-white drop-shadow-md" />
+                <ChevronLeftIcon className="w-6 h-6 text-white drop-shadow-md" />
             ) : (
-                <ChevronRightIcon className="w-8 h-8 text-white drop-shadow-md" />
+                <ChevronRightIcon className="w-6 h-6 text-white drop-shadow-md" />
             )}
         </button>
     );
@@ -38,6 +38,7 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     const checkScrollPosition = () => {
         if (!containerRef.current) return;
@@ -80,8 +81,28 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
         }
     };
 
+    // Défilement automatique
+    useEffect(() => {
+        if (isHovered || !containerRef.current) return;
+
+        const interval = setInterval(() => {
+            containerRef.current?.scrollBy({
+                left: 250, // Taille d'un élément environ
+                behavior: "smooth",
+            });
+
+            checkScrollPosition();
+        }, 2500); // Défilement toutes les 2.5 secondes
+
+        return () => clearInterval(interval);
+    }, [isHovered]);
+
     return (
-        <div className="relative w-full flex flex-col items-center px-6 py-8 overflow-hidden">
+        <div 
+            className="relative w-full flex flex-col items-center py-8 overflow-hidden"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
             <h1 className={`${playfair.className} text-4xl font-bold drop-shadow-lg mt-10 leading-tight 
                  text-center text-custom-brown`}>
                 Discover Our Product Collection

@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { CircleUserRound, Search, Menu, ShoppingCart, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { handlelog, userCart } from '@/lib/action';
@@ -58,7 +57,6 @@ const Navbar = () => {
         fetchCart();
     }, []);
 
-    // Fermer les menus déroulants au clic en dehors
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -183,7 +181,6 @@ const Navbar = () => {
                         className="cursor-pointer lg:hidden transition-transform duration-200 hover:scale-110"
                         onClick={() => setDropdownMenu(!dropdownMenu)}
                     />
-
                     {/* ICONE DE PROFIL */}
                     <button
                         className="cursor-pointer p-1 relative transition-transform duration-200 hover:scale-110"

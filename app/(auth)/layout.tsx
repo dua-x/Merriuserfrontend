@@ -3,7 +3,7 @@ import "../globals.css";
 
 
 export const metadata: Metadata = {
-  title: "Merri - Store Auth",
+  title: "Merri - Admin Auth",
   description: "next.js 14 Merri Ecomerce store ",
 };
 
