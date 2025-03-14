@@ -27,25 +27,25 @@ export default function Homepage() {
                 
                 {/* Contenu du texte centré */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <h1 className={`${playfair.className} text-white text-6xl md:text-7xl font-bold 
+                    <h1 className={`${playfair.className} text-white text-5xl md:text-6xl lg:text-7xl font-bold 
                                    tracking-wider drop-shadow-2xl animate-fadeInDown`}>
                         MEERI Store
                     </h1>
-                    <h2 className="text-3xl md:text-4xl text-white font-semibold mt-4 animate-fadeInUp">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl  text-white font-semibold mt-4 animate-fadeInUp">
                         Élégance et Qualité pour Chaque Femme
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-200 mt-4 max-w-3xl animate-fadeInUp delay-100">
+                    <p className="text-lg md:text-xl lg:text-2xl font-bold mt-4 max-w-xl md:max-w-2xl lg:max-w-3xl  animate-fadeInUp delay-100">
                         Découvrez nos collections exclusives de vêtements qui allient confort, style et modernité.
                     </p>
 
                     {/* Bouton d’action amélioré */}
                     <Link 
-    href="#collections"
-    className="mt-8 px-10 py-4 bg-custom-brown text-white text-lg font-semibold rounded-full 
-               shadow-lg hover:bg-white hover:text-custom-brown transition-all duration-300 ease-in-out"
->
-    DÉCOUVRIR LA COLLECTION
-</Link>
+                        href="#collections"
+                        className="mt-8 px-10 py-4  bg-custom-brown text-white text-sm md:text-md lg:text-lg font-semibold rounded-full 
+                                shadow-lg hover:bg-white hover:text-custom-brown transition-all duration-300 ease-in-out"
+                    >
+                        DÉCOUVRIR LA COLLECTION
+                    </Link>
 
                 </div>
             </div>

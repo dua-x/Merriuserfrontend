@@ -47,15 +47,17 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
     }).format(totalPrice);
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-2xl border border-gray-200 flex flex-col lg:flex-row gap-10">
+        <div className="w-full max-w-7xl mx-auto m-4 p-6 bg-white shadow-lg rounded-2xl border border-gray-200 flex flex-col lg:flex-row gap-10">
             {/* Left Section - Gallery */}
-            <div className="w-full lg:w-2/3 flex flex-col gap-6">
+            <div className="w-full lg:w-2/3 flex flex-col gap-2">
                 {/* Name & Favorite (Visible on Mobile, Hidden on Large Screens) */}
                 <div className="flex justify-between items-center lg:hidden">
                     <p className="text-2xl font-bold text-gray-900">{productInfo.name}</p>
                     <HeartFavorite product={productInfo} />
                 </div>
-
+                <div className="flex text-gray-500 text-sm">
+                    <p className="font-semibold text-gray-800">{productInfo.category.name|| 'Uncategorized'}</p>
+                </div>
                 <Gallery productImage={productInfo?.images || []} />
             </div>
 
@@ -66,15 +68,14 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
                     <p className="text-2xl font-bold text-gray-900">{productInfo.name}</p>
                     <HeartFavorite product={productInfo} />
                 </div>
+                <div className="flex gap-2 text-gray-500 text-sm">
+                    <p className="font-semibold text-gray-800">{productInfo.category.name|| 'Uncategorized'}</p>
+                </div>
 
                 <p className="text-2xl font-bold text-gray-900">{formattedPrice}</p>
 
                 <p className="text-gray-600 text-lg">{productInfo.description}</p>
 
-                <div className="flex gap-2 text-gray-500 text-sm">
-                    <p className="font-medium">Category:</p>
-                    <p className="font-semibold text-gray-800">{productInfo.category.name|| 'Uncategorized'}</p>
-                </div>
 
                 {/* Colors */}
                 {productInfo.productdetail?.length > 0 && (
