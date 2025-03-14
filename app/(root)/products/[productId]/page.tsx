@@ -56,13 +56,13 @@ const ProductDetails = ({ params }: { params: Promise<{ productId: string }> }) 
 
   return (
     <>
-      <div className="max-w-7xl mx-auto flex justify-center items-start gap-16 py-4 px-6 lg:py-4 lg:px-16 lg:flex-row max-md:flex-col max-md:items-center">
+      <div className="mx-auto flex justify-center items-start gap-16 py-4 px-6 lg:py-4 lg:px-16 lg:flex-row max-md:flex-col max-md:items-center">
         <ProductInfo productInfo={productDetails} />
       </div>
 
       <MightLike similarProducts={similarProducts} />
       <div className="max-w-7xl mx-auto py-12 px-6 lg:py-16 lg:px-16">
-        <div className="flex flex-col lg:flex-row items-start justify-between gap-8 w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 w-full">
           <div className="w-full lg:w-1/3">
             <Comment productid={productId} />
           </div>

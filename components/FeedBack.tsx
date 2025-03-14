@@ -119,7 +119,7 @@ const Feedback = () => {
                 Vos Avis
             </h1>
 
-            <div className="relative w-full max-w-5xl mt-8">
+            <div className="relative w-full mt-8">
                 <ChevronButton direction="left" onClick={() => scroll("left")} visible={canScrollLeft} />
 
                 <div

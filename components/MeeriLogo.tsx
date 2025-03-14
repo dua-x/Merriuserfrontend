@@ -19,18 +19,20 @@ export default function MeeriLogo() {
                 MEERI
             </h1>
             <p
-                className={`
-          ${playfair.className} 
-          text-sm 
-          md:text-base 
-          md:tracking-[0.25em]
-          tracking-[0.15em]
-          uppercase
-          
-        `}
-            >
-                MEERI STORE
-            </p>
+    className={`
+        ${playfair.className} 
+        text-sm 
+        md:text-base 
+        md:tracking-[0.25em]
+        tracking-[0.15em]
+        uppercase
+        drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]
+    `}
+>
+    MEERI STORE
+</p>
+
+
         </div>
     );
 }

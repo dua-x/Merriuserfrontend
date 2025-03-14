@@ -34,7 +34,7 @@ const MightLike = ({ similarProducts }: { similarProducts: any }) => {
 
                     <div
                         ref={containerRef}
-                        className="flex overflow-x-auto scrollbar-hide gap-4 snap-x snap-mandatory scroll-smooth
+                        className="flex overflow-x-auto justify-center items-center scrollbar-hide gap-4 snap-x snap-mandatory scroll-smooth
                         w-full justify-start"
                     >
                         {similarProducts.product.map((product: any) => (

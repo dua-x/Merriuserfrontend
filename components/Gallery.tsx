@@ -13,8 +13,9 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
     useEffect(() => {
         const updateScrollState = () => {
             if (thumbnailRef.current) {
-                const { scrollLeft, scrollWidth, clientWidth } = thumbnailRef.current;
-                setCanScrollLeft(scrollLeft > 0);
+                const { scrollLeft, scrollWidth, clientWidth, scrollHeight, clientHeight } =
+                    thumbnailRef.current;
+                setCanScrollLeft(scrollLeft > 0 || scrollHeight > clientHeight);
                 setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
             }
         };
@@ -43,21 +44,11 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
     };
 
     return (
-        <div className="flex flex-col items-center w-full max-w-6xl">
-            {/* Main Image */}
-            <div className="w-full max-w-[500px] sm:max-w-[600px] md:max-w-[700px] h-auto flex justify-center">
-    <img
-        src={mainImage}
-        alt="product"
-        className="w-full h-auto max-h-[600px] sm:max-h-[650px] object-cover rounded-lg shadow-xl aspect-[2/3]"
-    />
-</div>
-
-
-            {/* Thumbnail List - Always Below */}
-            <div className="relative w-full max-w-[700px] mt-4">
-                {/* Scroll Left Button */}
-                {canScrollLeft && (
+        <div className="flex flex-col-reverse lg:flex-row items-center w-full max-w-6xl gap-6">
+            {/* Thumbnails */}
+            <div className="w-full lg:w-32 flex lg:flex-col overflow-x-auto lg:overflow-y-auto max-h-[500px] scrollbar-hide">
+                 {/* Scroll Left Button */}
+                 {canScrollLeft && (
                     <button
                         onClick={() => scroll("left")}
                         className="absolute left-0 z-10 bg-white p-2 rounded-full shadow-md"
@@ -65,30 +56,42 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
                         <ChevronLeft className="w-6 h-6 text-gray-600" />
                     </button>
                 )}
-
-                {/* Thumbnails Scrollable List */}
                 <div
                     ref={thumbnailRef}
-                    className="flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
-                    style={{
-                        scrollBehavior: "smooth",
-                        display: "flex",
-                        overflowX: "auto",
-                        whiteSpace: "nowrap",
-                    }}
+                    className="flex lg:flex-col p-2 gap-2 overflow-x-auto lg:overflow-y-auto scrollbar-hide w-full"
                 >
                     {productImage.map((image, index) => (
-                        <img
+                        <div
                             key={index}
-                            src={image}
-                            alt="product thumbnail"
-                            className={`w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover cursor-pointer transition-all ${
-                                mainImage === image ? "border-2 border-black scale-105" : ""
-                            }`}
-                            onClick={() => setMainImage(image)}
-                        />
+                            className="w-20 h-auto md:w-24 aspect-[3/4] flex-shrink-0 cursor-pointer"
+                        >
+                            <img
+                                src={image}
+                                alt="product thumbnail"
+                                className={`aspect-[3/4] object-cover rounded-lg transition-all ${
+                                    mainImage === image ? "border-2 border-black scale-105" : ""
+                                }`}
+                                onClick={() => setMainImage(image)}
+                            />
+                        </div>
                     ))}
                 </div>
+            </div>
+
+            {/* Main Image */}
+            <div className="w-full max-w-[400px] sm:max-w-[500px] lg:flex-1 flex justify-center">
+                <div className="w-full aspect-[3/4]">
+                    <img
+                        src={mainImage}
+                        alt="product"
+                        className="w-full h-full object-cover rounded-lg shadow-xl"
+                    />
+                </div>
+            </div>
+
+            {/* Scroll Controls (Only for small screens) */}
+        
+               
 
                 {/* Scroll Right Button */}
                 {canScrollRight && (
@@ -99,7 +102,7 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
                         <ChevronRight className="w-6 h-6 text-gray-600" />
                     </button>
                 )}
-            </div>
+          
         </div>
     );
 };
