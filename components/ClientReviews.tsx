@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FeedbackByProduct, FeedbackGET } from "@/lib/action";
+import { playfair } from "@/app/fonts/font";
 
 
 interface UserFeedback {
@@ -56,49 +57,54 @@ const ClientReviews = ({ productID }: { productID: string }) => {
 
     return (
         <section className="relative w-full items-center justify-center my-8 text-center">
-            <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">Feedback Corner</h1>
-
-            {reviews?.userfeedback.length === 0 ? (
+             {reviews?.userfeedback.length === 0 ? (
                 <p className="text-gray-500 mt-4">No feedback available yet.</p>
             ) : (
-                <div className="relative flex items-center justify-center">
-                    <button
-                        onClick={() => scroll("left")}
-                        className="absolute left-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
-                    >
-                        <ChevronLeftIcon className="w-6 h-6" />
-                    </button>
+                <>
+                    <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown drop-shadow-lg text-center`}>
+                                    Vos Avis
+                    </h1>
+                            
+                    <div className="relative flex items-center justify-center">
+                        <button
+                            onClick={() => scroll("left")}
+                            className="absolute left-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
+                        >
+                            <ChevronLeftIcon className="w-6 h-6" />
+                        </button>
 
-                    <div
-                        ref={containerRef}
-                        className="flex overflow-x-auto gap-4 px-4 scrollbar-hide snap-x snap-mandatory scroll-smooth 
-                        w-full justify-center items-center"
-                    >
-                        {reviews?.userfeedback?.map((feedback, index) => (
-                            <div
-                                key={index}
-                                className="snap-center shrink-0 w-[300px] h-[180px] bg-custom-beige text-white p-5 rounded-lg shadow-md flex flex-col items-center justify-center"
-                            >
-                                <p className="text-lg font-semibold">{feedback.user.username}</p>
-                                <p className="text-sm italic">{feedback.comment}</p>
-                                <p className="text-yellow-500">{"⭐".repeat(feedback.rating)}</p>
-                            </div>
-                        ))}
+                        <div
+                            ref={containerRef}
+                            className="flex overflow-x-auto gap-4 px-4 scrollbar-hide snap-x snap-mandatory scroll-smooth 
+                            w-full justify-center items-center"
+                        >
+                            {reviews?.userfeedback?.map((feedback, index) => (
+                                <div
+                                    key={index}
+                                    className="snap-center shrink-0 w-[300px] h-[180px] bg-custom-beige text-white p-5 rounded-lg shadow-md flex flex-col items-center justify-center"
+                                >
+                                    <p className="text-lg font-semibold">{feedback.user.username}</p>
+                                    <p className="text-sm italic">{feedback.comment}</p>
+                                    <p className="text-yellow-500">{"⭐".repeat(feedback.rating)}</p>
+                                </div>
+                            ))}
 
+                        </div>
+
+                        <button
+                            onClick={() => scroll("right")}
+                            className="absolute right-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
+                        >
+                            <ChevronRightIcon className="w-6 h-6" />
+                        </button>
                     </div>
-
-                    <button
-                        onClick={() => scroll("right")}
-                        className="absolute right-0 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 z-10 hidden md:flex"
-                    >
-                        <ChevronRightIcon className="w-6 h-6" />
-                    </button>
-                </div>
+                    <div className="mt-3 text-center text-gray-500 text-sm md:hidden animate-bounce">
+                    Swipe left or right to explore →
+                    </div>
+                </>
             )}
 
-            <div className="mt-3 text-center text-gray-500 text-sm md:hidden animate-bounce">
-                Swipe left or right to explore →
-            </div>
+        
         </section>
     );
 };

@@ -7,7 +7,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
         <Link
             href={`/products/${product._id}`}
             key={product._id}
-            className='relative w-[220px] h-[375px] rounded-lg overflow-hidden shadow-lg transition-shadow hover:shadow-2xl'
+            className='relative w-[220px] h-[375px] rounded-lg overflow-hidden backdrop-blur-lg shadow-xl transition-shadow hover:shadow-2xl'
         >
             <img
                 src={product.images?.[0] || '/bespoke.jpg'}

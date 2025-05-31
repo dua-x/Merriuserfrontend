@@ -1,6 +1,7 @@
 import React from "react";
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import DevCredit from "@/components/devCredit";
 
 const ContactUs = () => {
     return (
@@ -78,6 +79,8 @@ const ContactUs = () => {
                     </div>
                 </div>
             </div>
+            {/* Developer Credit */}
+            <DevCredit />
         </footer>
     );
 };

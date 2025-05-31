@@ -103,11 +103,11 @@ const MightLike = ({ similarProducts }: { similarProducts: any }) => {
 
     return (
         <div 
-        className="relative w-full flex flex-col items-center py-8 overflow-hidden"
+        className="relative w-full flex flex-col items-center overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
     >
-            <h2 className="text-2xl md:text-3xl font-bold p-10 text-gray-900 mb-6">Products You Might Like</h2>
+            <h2 className="text-2xl md:text-3xl items-start font-bold p-10 text-gray-900 mb-6">produits similaires</h2>
             <div className="relative max-w-[90%] ">
                
   {/* Left Scroll Button */}
