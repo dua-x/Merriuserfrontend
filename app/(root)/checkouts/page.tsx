@@ -3,39 +3,96 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { handleUserinfo } from "@/lib/action";
 import React from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { userCart } from "@/lib/action";
 import Link from "next/link";
 import Image from "next/image";
 
+interface ProductItem {
+  Productid: {
+    _id: string;
+    name: string;
+    Price: number;
+    image: string;
+  };
+  quantityselect: number;
+  color?: string;
+  size?: string;
+}
+
+interface CartData {
+  ProductList: ProductItem[];
+  total: number;
+}
+
 const Checkout = () => {
-  const [cart, setCart] = useState<any>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const buyNowMode = searchParams.get('mode') === 'buynow';
+  const productId = searchParams.get('productId');
+  const quantity = parseInt(searchParams.get('quantity') || '1');
+  const color = searchParams.get('color') || '';
+  const size = searchParams.get('size') || '';
+
+  const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedWilaya, setSelectedWilaya] = useState("");
   const [selectedShipping, setSelectedShipping] = useState("desktop");
   const [deliveryPrices, setDeliveryPrices] = useState({ desktop: 0, domicile: 0 });
-  const [wilayaData, setWilayaData] = useState<any[]>([]); // New state for wilaya data
+  const [wilayaData, setWilayaData] = useState<any[]>([]);
+  const [singleProduct, setSingleProduct] = useState<any>(null);
 
-  // Fetch cart data
+  // Fetch data based on mode
   useEffect(() => {
-    const fetchCart = async () => {
+    const initializeCheckout = async () => {
       try {
-        const token = localStorage.getItem("authtoken");
-        if (!token) {
-          return;
-        }
-        const data = await userCart();
-        if (data) {
-          setCart(data);
+        if (buyNowMode) {
+          // Buy Now mode - get product from localStorage
+          const buyNowProduct = localStorage.getItem("buyNowProduct");
+          
+          if (!buyNowProduct) {
+            router.push('/');
+            return;
+          }
+
+          const productData = JSON.parse(buyNowProduct);
+          
+          setCart({
+            ProductList: [{
+              Productid: {
+                _id: productData.productId,
+                name: productData.name,
+                Price: productData.price,
+                image: productData.image
+              },
+              quantityselect: productData.quantity,
+              color: productData.color,
+              size: productData.size
+            }],
+            total: productData.price * productData.quantity
+          });
+        } else {
+          // Cart mode - fetch user cart
+          const token = localStorage.getItem("authtoken");
+          if (!token) {
+            router.push('/login?redirect=checkout');
+            return;
+          }
+          
+          const data = await userCart();
+          if (data) {
+            setCart(data);
+          }
         }
       } catch (error) {
-        console.error("Error fetching cart:", error);
+        console.error("Error initializing checkout:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchCart();
-  }, []);
+
+    initializeCheckout();
+  }, [buyNowMode, router]);
 
   // Fetch wilaya and commune data
   const fetchWilayaData = async () => {
@@ -71,10 +128,13 @@ const Checkout = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  // Fetch user data
+  // Fetch user data if authenticated
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        const token = localStorage.getItem("authtoken");
+        if (!token) return;
+        
         const userdata = await handleUserinfo();
         setFormdata({
           ...userdata,
@@ -88,7 +148,6 @@ const Checkout = () => {
     fetchUserData();
   }, []);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormdata({
       ...formdata,
@@ -96,7 +155,6 @@ const Checkout = () => {
     });
   };
 
-  // Handle wilaya change
   const handleWilayaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const wilaya = e.target.value;
     setSelectedWilaya(wilaya);
@@ -107,14 +165,12 @@ const Checkout = () => {
     }
   };
 
-  // Handle delete cart
   const handledeletecart = async () => {
     try {
       const token = localStorage.getItem('authtoken');
-      if (!token) {
-        return;
-      }
-      const response = await axios.post(
+      if (!token) return;
+      
+      await axios.post(
         `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/carts/cartPOST`,
         {
           query: `
@@ -132,40 +188,57 @@ const Checkout = () => {
           },
         }
       );
-      return response.data.data.Deletecartuser;
     } catch (error) {
       console.error('Error deleting cart:', error);
     }
   };
 
-  // Handle order creation
   const handleOrderCreation = async (e: React.FormEvent) => {
-    e.preventDefault();  // Prevent default form submission
+    e.preventDefault();
 
-    // Ensure cart and cart.items are valid before proceeding
-    if (!cart || !cart.ProductList || cart.ProductList.length === 0) {
-      setError("Cart is empty.");
+    // Validate form data
+    if (!formdata.wilaya || !formdata.commune || !formdata.adresse || !formdata.phonenumber) {
+      setError("Please fill all required fields");
       return;
     }
 
-    const orderData = {
-      orderitems: cart.ProductList.map((item: any) => ({
+    // Prepare order items based on mode
+    let orderItems;
+    if (buyNowMode && singleProduct) {
+      orderItems = [{
+        product: singleProduct._id,
+        quantity: quantity,
+        color: color,
+        size: size,
+      }];
+    } else if (cart) {
+      orderItems = cart.ProductList.map((item: ProductItem) => ({
         product: item.Productid._id,
         quantity: item.quantityselect,
         color: item.color,
         size: item.size,
-      })),
+      }));
+    } else {
+      setError("No items to order");
+      return;
+    }
+
+    const orderData = {
+      firstname: formdata.firstname || "Anonymous",
+      lastname: formdata.lastname || "User",
+      email: formdata.email,
+      orderitems: orderItems,
       adress: formdata.adresse,
       wilaya: formdata.wilaya,
       commune: formdata.commune,
       phonenumber: formdata.phonenumber,
-      firstname: formdata.firstname,
-      lastname: formdata.lastname,
-      email: formdata.email
+      shippingType: selectedShipping,
+      shippingPrice: selectedShipping === "desktop" ? deliveryPrices.desktop : deliveryPrices.domicile
     };
 
     try {
       const token = localStorage.getItem('authtoken');
+      
       if (token) {
         // Authenticated user order
         const response = await axios.post(
@@ -174,26 +247,9 @@ const Checkout = () => {
             query: `
               mutation CreateOrder($input: OrderInput!) {
                 createOrder(input: $input) {
-                  user {
-                    _id
-                    username
-                  }
-                  orderitems {
-                    quantity
-                    product {
-                      name
-                    }
-                  }
                   order {
                     _id
                     idorder
-                    totalprice
-                    quantityOrder
-                    adress
-                    wilaya
-                    commune
-                    phonenumber
-                    status
                   }
                   message
                 }
@@ -201,7 +257,7 @@ const Checkout = () => {
             `,
             variables: {
               input: {
-                livprice: 300,
+                livprice: orderData.shippingPrice,
                 orderitems: orderData.orderitems,
                 adress: orderData.adress,
                 wilaya: orderData.wilaya,
@@ -219,39 +275,26 @@ const Checkout = () => {
         );
 
         if (response.data.errors) {
-          setError("There was an error processing the order.");
-        } else if (response.data.data.createOrder.message === "Order saved successfully") {
+          setError(response.data.errors[0].message || "Error creating order");
+        } else {
           setMessage("Order created successfully!");
-          // Delete the cart after successful order creation
-          await handledeletecart();
-          // Optionally, redirect or clear the cart
+          if (!buyNowMode) {
+            await handledeletecart();
+          }
+          // Redirect to order confirmation
+          router.push(`/order-confirmation?id=${response.data.data.createOrder.order.idorder}`);
         }
       } else {
-        // Handle anonymous user order logic here
+        // Guest user order
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/orderPOST`,
           {
             query: `
               mutation CreateOrderAnonym($input: OrderInputAnonym!) {
                 createOrderAnonym(input: $input) {
-                  user {
-                    _id
-                    username
-                  }
-                  orderitems {
-                    quantity
-                    product
-                  }
                   order {
                     _id
                     idorder
-                    totalprice
-                    quantityOrder
-                    adress
-                    wilaya
-                    commune
-                    phonenumber
-                    status
                   }
                   message
                 }
@@ -259,14 +302,15 @@ const Checkout = () => {
             `,
             variables: {
               input: {
-                firstname: orderData.firstname || "Anonymous",
-                lastname: orderData.lastname || "User",
+                firstname: orderData.firstname,
+                lastname: orderData.lastname,
                 email: orderData.email,
                 orderitems: orderData.orderitems,
                 adress: orderData.adress,
                 commune: orderData.commune,
                 wilaya: orderData.wilaya,
                 phonenumber: orderData.phonenumber,
+                livprice: orderData.shippingPrice
               },
             },
           },
@@ -278,174 +322,279 @@ const Checkout = () => {
         );
 
         if (response.data.errors) {
-          setError("There was an error processing the order.");
+          setError(response.data.errors[0].message || "Error creating order");
         } else {
-          // Delete the cart after successful order creation
           setMessage("Order created successfully!");
-          // Optionally, redirect or clear the cart
+          // Redirect to order confirmation
+          router.push(`/order-confirmation?id=${response.data.data.createOrderAnonym.order.idorder}`);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating order:", error);
-      setError("There was an issue with your order. Please try again.");
+      setError(error.response?.data?.message || "There was an issue with your order. Please try again.");
     }
   };
 
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
+  if (!buyNowMode && !cart?.ProductList?.length) {
+    return (
+      <div className="text-center py-10">
+        <p>Your cart is empty</p>
+        <Link href="/#/#collections" className="text-blue-500 mt-2 inline-block">
+          Continue Shopping
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-2max-lg:flex-col max-sm:px-2">
+    <div className="flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-2">
       <div className="w-2/3 max-lg:w-full">
         <form onSubmit={handleOrderCreation} className="max-w-lg mx-auto p-4">
-          {error && <div className="text-red-500 mb-4">{error}</div>}
-          {message && <div className="text-green-500 mb-4">{message}</div>}
-          <div>
-            <h1 className="text-2xl mb-6">Contact</h1>
-            <Link href={'/login'}>Open session</Link>
+          {error && <div className="text-red-500 mb-4 p-2 bg-red-50 rounded">{error}</div>}
+          {message && <div className="text-green-500 mb-4 p-2 bg-green-50 rounded">{message}</div>}
+          
+          <div className="mb-6">
+            <h1 className="text-2xl mb-4">Contact</h1>
+            {!localStorage.getItem("authtoken") && (
+              <p className="mb-4">
+                Already have an account? <Link href={`/signin?redirect=checkout${buyNowMode ? `?mode=buynow&productId=${productId}&quantity=${quantity}` : ''}`} className="text-blue-500">Log in</Link>
+              </p>
+            )}
           </div>
 
           {/* Email */}
-          <div className="md:col-span-2">
+          <div className="mb-4">
             <input
               type="email"
               name="email"
               value={formdata.email}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your email"
+              placeholder="Email"
               required
             />
           </div>
 
-          {/* Grid Layout */}
-          <h1 className="text-2xl mb-6">Livraison</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Country (Read-only) */}
-            <div className="mb-3 md:col-span-2">
-              <select
-                id="pays"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-100 cursor-not-allowed"
-                name="pays"
-                value={formdata.pays}
-                disabled
-              >
-                <option value="Algeria">Algeria</option>
-              </select>
-            </div>
+          {/* Shipping Information */}
+          <div className="mt-8">
+            <h1 className="text-2xl mb-6">Shipping Information</h1>
+            
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Country (Read-only) */}
+              <div className="mb-3 md:col-span-2">
+                <label className="block mb-1 text-sm">Country</label>
+                <select
+                  id="pays"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-100 cursor-not-allowed"
+                  name="pays"
+                  value={formdata.pays}
+                  disabled
+                >
+                  <option value="Algeria">Algeria</option>
+                </select>
+              </div>
 
-            {/* First Name */}
-            <div>
-              <input
-                type="text"
-                name="firstname"
-                value={formdata.firstname}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="First Name"
-                required
-              />
-            </div>
+              {/* First Name */}
+              <div>
+                <label className="block mb-1 text-sm">First Name</label>
+                <input
+                  type="text"
+                  name="firstname"
+                  value={formdata.firstname}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="First Name"
+                  required
+                />
+              </div>
 
-            {/* Last Name */}
-            <div>
-              <input
-                type="text"
-                name="lastname"
-                value={formdata.lastname}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Last Name"
-                required
-              />
-            </div>
+              {/* Last Name */}
+              <div>
+                <label className="block mb-1 text-sm">Last Name</label>
+                <input
+                  type="text"
+                  name="lastname"
+                  value={formdata.lastname}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Last Name"
+                  required
+                />
+              </div>
 
-            {/* Adresse */}
-            <div className="md:col-span-2">
-              <input
-                type="text"
-                name="adresse"
-                value={formdata.adresse}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your address"
-              />
-            </div>
+              {/* Address */}
+              <div className="md:col-span-2">
+                <label className="block mb-1 text-sm">Address</label>
+                <input
+                  type="text"
+                  name="adresse"
+                  value={formdata.adresse}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Street address"
+                  required
+                />
+              </div>
 
-            {/* Wilaya */}
-            <select name="wilaya" value={formdata.wilaya} onChange={handleWilayaChange} className="w-full p-2 border rounded-md">
-              <option value="">Select Wilaya</option>
-              {wilayaData.map((wilaya) => (
-                <option key={wilaya.code} value={wilaya.wilaya}>
-                  {`${wilaya.code}-${wilaya.wilaya}`}
-                </option>
-              ))}
-            </select>
+              {/* Wilaya */}
+              <div>
+                <label className="block mb-1 text-sm">Wilaya</label>
+                <select 
+                  name="wilaya" 
+                  value={formdata.wilaya} 
+                  onChange={handleWilayaChange} 
+                  className="w-full p-2 border rounded-md"
+                  required
+                >
+                  <option value="">Select Wilaya</option>
+                  {wilayaData.map((wilaya) => (
+                    <option key={wilaya.code} value={wilaya.wilaya}>
+                      {`${wilaya.code}-${wilaya.wilaya}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Commune */}
-            <select name="commune" value={formdata.commune} onChange={handleInputChange} className="w-full p-2 border rounded-md mt-3" disabled={!selectedWilaya}>
-              <option value="">Select Commune</option>
-              {selectedWilaya && wilayaData.find((w) => w.wilaya === selectedWilaya)?.commune.map((commune: string) => (
-                <option key={commune} value={commune}>{commune}</option>
-              ))}
-            </select>
+              {/* Commune */}
+              <div>
+                <label className="block mb-1 text-sm">Commune</label>
+                <select 
+                  name="commune" 
+                  value={formdata.commune} 
+                  onChange={handleInputChange} 
+                  className="w-full p-2 border rounded-md" 
+                  disabled={!selectedWilaya}
+                  required
+                >
+                  <option value="">Select Commune</option>
+                  {selectedWilaya && wilayaData.find((w) => w.wilaya === selectedWilaya)?.commune.map((commune: string) => (
+                    <option key={commune} value={commune}>{commune}</option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Phone Number */}
-            <div className="md:col-span-2">
-              <input
-                type="text"
-                name="phonenumber"
-                value={formdata.phonenumber}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Phone Number"
-              />
+              {/* Phone Number */}
+              <div className="md:col-span-2">
+                <label className="block mb-1 text-sm">Phone Number</label>
+                <input
+                  type="text"
+                  name="phonenumber"
+                  value={formdata.phonenumber}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Phone Number"
+                  required
+                />
+              </div>
             </div>
           </div>
 
           {/* Shipping Mode */}
-          <h1 className="text-2xl mt-4">Mode d’expédition</h1>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="shipping" value="desktop" checked={selectedShipping === "desktop"} onChange={() => setSelectedShipping("desktop")} className="w-4 h-4" /> STOP DESK - {deliveryPrices.desktop} DZD
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" name="shipping" value="domicile" checked={selectedShipping === "domicile"} onChange={() => setSelectedShipping("domicile")} className="w-4 h-4" /> À Domicile - {deliveryPrices.domicile} DZD
-            </label>
+          <div className="mt-8">
+            <h1 className="text-2xl mb-4">Shipping Method</h1>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 p-3 border rounded hover:border-blue-500">
+                <input 
+                  type="radio" 
+                  name="shipping" 
+                  value="desktop" 
+                  checked={selectedShipping === "desktop"} 
+                  onChange={() => setSelectedShipping("desktop")} 
+                  className="w-4 h-4" 
+                /> 
+                <div>
+                  <p className="font-medium">STOP DESK</p>
+                  <p className="text-sm">{deliveryPrices.desktop} DZD</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-2 p-3 border rounded hover:border-blue-500">
+                <input 
+                  type="radio" 
+                  name="shipping" 
+                  value="domicile" 
+                  checked={selectedShipping === "domicile"} 
+                  onChange={() => setSelectedShipping("domicile")} 
+                  className="w-4 h-4" 
+                /> 
+                <div>
+                  <p className="font-medium">À Domicile</p>
+                  <p className="text-sm">{deliveryPrices.domicile} DZD</p>
+                </div>
+              </label>
+            </div>
           </div>
 
           {/* Payment */}
-          <h1 className="text-2xl mb-6">Paiment</h1>
-          <div className="bg-[#C4A484]/40 rounded p-2">
-            <h3> Paiement à la livraison </h3>
+          <div className="mt-8">
+            <h1 className="text-2xl mb-4">Payment</h1>
+            <div className="bg-[#C4A484]/40 rounded p-4">
+              <h3 className="font-medium">Cash on Delivery</h3>
+              <p className="text-sm mt-1">Pay when you receive your order</p>
+            </div>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full mt-4 p-3 bg-custom-beige border border-[#A99282] text-white rounded-md border hover:border-[#a27a64] hover:bg-[#a27a64] transition"
+            className="w-full mt-6 p-3 bg-custom-beige text-white rounded-md hover:bg-[#a27a64] transition"
           >
-            Valider la commande
+            Complete Order
           </button>
         </form>
       </div>
 
       {/* Order Summary */}
-      <div className="w-full lg:w-1/3 bg-[#a27a64]/40 border border-costum-beige p-4 rounded-lg">
-        <h1 className="text-2xl mb-4">Résumé de la commande</h1>
-        {cart?.ProductList?.length > 0 ? (
-          cart.ProductList.map((cartItem: any) => (
-            <Link href={`/products/${cartItem.Productid._id}`} key={cartItem.Productid._id}>
-              <div className="flex items-center gap-4 p-2 border-b">
-                <Image src={cartItem.Productid.image || "/placeholder.png"} width={80} height={80} className="rounded-lg" alt={cartItem.Productid.name} />
-                <div>
-                  <p>{cartItem.Productid.name}</p>
-                  <p>{cartItem.Productid.Price} DZD</p>
-                </div>
+      <div className="w-full lg:w-1/3 bg-[#a27a64]/10 border border-costum-beige p-6 rounded-lg">
+        <h1 className="text-2xl mb-6">Order Summary</h1>
+        <div className="space-y-4">
+          {cart?.ProductList?.map((cartItem: ProductItem) => (
+            <div key={cartItem.Productid._id} className="flex items-center gap-4 p-3 border-b">
+              <div className="relative w-16 h-16">
+                <Image 
+                  src={cartItem.Productid.image || "/placeholder.png"} 
+                  fill
+                  className="rounded-lg object-cover" 
+                  alt={cartItem.Productid.name} 
+                />
               </div>
-            </Link>
-          ))
-        ) : (
-          <p className="text-center text-gray-500">Your cart is empty.</p>
-        )}
-        <p className="text-lg mt-4">Total Amount: {cart?.total?.toFixed(2) || "0.00"} DZD</p>
+              <div className="flex-1">
+                <p className="font-medium">{cartItem.Productid.name}</p>
+                {cartItem.color && <p className="text-sm">Color: {cartItem.color}</p>}
+                {cartItem.size && <p className="text-sm">Size: {cartItem.size}</p>}
+                <p className="text-sm">Qty: {cartItem.quantityselect}</p>
+              </div>
+              <p className="font-medium">{cartItem.Productid.Price * cartItem.quantityselect} DZD</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 space-y-3">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span>{cart?.total?.toFixed(2) || "0.00"} DZD</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Shipping</span>
+            <span>
+              {selectedShipping === "desktop" 
+                ? `${deliveryPrices.desktop} DZD` 
+                : `${deliveryPrices.domicile} DZD`}
+            </span>
+          </div>
+          <div className="border-t pt-3 flex justify-between font-bold text-lg">
+            <span>Total</span>
+            <span>
+              {cart 
+                ? (cart.total + (selectedShipping === "desktop" ? deliveryPrices.desktop : deliveryPrices.domicile)).toFixed(2) 
+                : "0.00"} DZD
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

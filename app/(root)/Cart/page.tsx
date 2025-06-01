@@ -121,8 +121,15 @@ const Cart = () => {
     };
 
     const handleCheckout = () => {
-        router.push("/checkouts");
-    };
+        if (!cart || cart.ProductList.length === 0) return;
+      
+        // Just use the first product's id or whatever productId you want to send
+        const productId = cart.ProductList[0].Productid._id;
+      
+        const url = `/checkouts?mode=buyNow&productId=${encodeURIComponent(productId)}`;
+        router.push(url);
+      };
+      
 
     if (loading) {
         return (
@@ -202,12 +209,21 @@ const Cart = () => {
                     <span>Total Amount</span>
                     <span>$ {cart.total.toFixed(2)}</span>
                 </div>
-                <button className="border rounded-lg text-body-bold bg-white py-3 w-full hover:bg-black hover:text-white" onClick={handleCheckout}>
+                <button className="border rounded-lg text-body-bold bg-white py-3 w-full hover:bg-black hover:text-white" 
+                onClick={handleCheckout}>
                     Proceed to Checkout
                 </button>
+                <Link 
+          href="/#collections" 
+          className="text-center text-sm text-gray-500 hover:text-gray-700"
+        >
+          Continue Shopping
+        </Link>
             </div>
         </div>
     );
 };
 
 export default Cart;
+
+

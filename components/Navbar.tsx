@@ -137,9 +137,16 @@ const Navbar = () => {
                     </div>
                     {user ? (
                         <>
-                            <button onClick={() => localStorage.removeItem('authtoken')} className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300">
-                                Log out
-                            </button>
+                            <button
+  onClick={() => {
+    localStorage.removeItem('authtoken');
+    window.location.reload(); // Full page reload to reset all client-side state
+  }}
+  className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300"
+>
+  Log out
+</button>
+
                             <button onClick={() => router.push('/edituser')} className="mt-3 text-center bg-custom-beige text-white py-1 rounded-lg hover:bg-[#a27a64] transition-colors duration-300">
                                 Edit Profile
                             </button>

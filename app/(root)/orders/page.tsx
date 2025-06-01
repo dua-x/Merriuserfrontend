@@ -1,128 +1,155 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getOrdersByUser } from "@/lib/action";
+import { ShoppingBag } from "lucide-react";
+import { playfair } from "@/app/fonts/font";
 
 const Orders = () => {
-    const [orders, setOrders] = useState<OrderType[]>([]);
-    const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const router = useRouter();
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const data = await getOrdersByUser();
-                console.log("Fetched Orders:", data);
-                if (Array.isArray(data)) {
-                    setOrders(data);
-                } else {
-                    console.error("Unexpected response format:", data);
-                    setOrders([]);
-                }
-            } catch (error) {
-                console.error("Error fetching orders:", error);
+  useEffect(() => {
+    const fetchOrders = async () => {
+        try {
+            const data = await getOrdersByUser();
+            console.log("Fetched Orders:", data);
+            if (Array.isArray(data)) {
+                // Trier les commandes par date (plus récentes en premier)
+                const sortedOrders = data.sort((a, b) => new Date(b.dateordered).getTime() - new Date(a.dateordered).getTime());
+                setOrders(sortedOrders);
+            } else {
+                console.error("Unexpected response format:", data);
                 setOrders([]);
             }
-        };
-        fetchOrders();
-    }, []);
-
-    const toggleOrderDetails = (orderId: string) => {
-        setExpandedOrder(expandedOrder === orderId ? null : orderId);
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            setOrders([]);
+        }
     };
+    fetchOrders();
+}, []);
 
-    return (
-        <div className="flex flex-col gap-10 py-16 px-10 max-lg:flex-col max-sm:px-3">
-            <div className="px-10 py-5 max-sm:px-3">
-                <p className="text-heading3-bold my-10">Historique des commandes</p>
-                {!orders || orders.length === 0 ? (
-                    <p className="text-body-bold my-5">Vous n'avez aucune commande jusqu'à maintenant.</p>
-                ) : (
-                    <div className="flex flex-col gap-10">
-                        {orders.map((order: OrderType) => (
-                            <div key={order._id} className="border border-gray-200 rounded-lg p-6 shadow-sm">
-                                <p className="text-base-bold mb-4">ID de la commande: {order.idorder}</p>
+  const toggleOrderDetails = (orderId: string) => {
+    setExpandedOrder(expandedOrder === orderId ? null : orderId);
+  };
 
-                                {/* Tableau vertical pour les détails */}
-                                <div className="border border-gray-300 rounded-lg p-4 w-fit">
-                                    <table className="border-collapse">
-                                        <tbody>
-                                            <tr className="border-b">
-                                                <th className="text-left p-2 pr-4 text-gray-700">Date:</th>
-                                                <td className="p-2">{order.dateordered}</td>
-                                            </tr>
-                                            <tr className="border-b">
-                                                <th className="text-left p-2 pr-4 text-gray-700">Statut:</th>
-                                                <td className="p-2">{order.status}</td>
-                                            </tr>
-                                            <tr>
-                                                <th className="text-left p-2 pr-4 text-gray-700">Total (DZA):</th>
-                                                <td className="p-2">{order.totalprice}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+  return (
+    <div className="flex flex-col items-center py-16 px-6 md:px-12">
+      <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown mb-10 text-center`}>
+        Historique des commandes
+      </h1>
 
-                                {/* Résumé de commande  */}
-                                <button
-                                    onClick={() => toggleOrderDetails(order._id)}
-                                    className="mt-4 text-blue-600 hover:underline"
-                                >
-                                    {expandedOrder === order._id ? "Masquer le résumé" : "Afficher le résumé de commande"}
-                                </button>
-
-                                {/* Order Summary (Collapsible Section) */}
-                                {expandedOrder === order._id && (
-                                    <div className="mt-4 flex flex-col gap-5 border-t pt-4">
-                                        {order.orderitems.map((orderItem: OrderItem, index: number) => (
-                                            <div key={index} className="flex gap-4 border-b pb-4">
-                                                {orderItem.product && (
-                                                    <Image
-                                                        src={orderItem.product.images[0] || "/placeholder.jpg"}
-                                                        alt={orderItem.product.name || "Product Image"}
-                                                        width={100}
-                                                        height={100}
-                                                        className="w-32 h-32 object-cover rounded-lg"
-                                                    />
-                                                )}
-
-                                                <div className="flex flex-col justify-between">
-                                                    <p className="text-small-medium">
-                                                        Titre: <span className="text-small-bold">{orderItem.product?.name || "Produit inconnu"}</span>
-                                                    </p>
-
-                                                    <p className="text-small-medium">
-                                                        Couleur: <span className="text-small-bold">{orderItem.color}</span>
-                                                    </p>
-
-                                                    {orderItem.size && (
-                                                        <p className="text-small-medium">
-                                                            Taille: <span className="text-small-bold">{orderItem.size}</span>
-                                                        </p>
-                                                    )}
-
-                                                    <p className="text-small-medium">
-                                                        Prix unitaire: <span className="text-small-bold">{orderItem.product?.Price || "N/A"} DZA</span>
-                                                    </p>
-
-                                                    <p className="text-small-medium">
-                                                        Quantité: <span className="text-small-bold">{orderItem.quantity}</span>
-                                                    </p>
-                                                    <p className="text-small-medium">
-                                                        Total : <span className="text-small-bold">{orderItem.priceproduct}</span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-
-                    </div>
-                )}
-            </div>
+      {orders.length === 0 ? (
+        <div className="text-center mt-12">
+          <p className="text-lg text-gray-500 mb-6">
+            Vous n'avez aucune commande jusqu'à maintenant.
+          </p>
+          <button
+            onClick={() => router.push("/#collections")}
+            className="inline-flex items-center gap-2 bg-[#C4A484] hover:bg-[#a98c68] text-white font-semibold py-3 px-6 rounded-lg transition"
+          >
+            <ShoppingBag />
+            Commencer vos achats
+          </button>
         </div>
-    );
+      ) : (
+        <div className="w-full max-w-4xl flex flex-col gap-8">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition bg-white"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-700 text-sm font-medium mb-1">
+                      Commande ID: <span className="font-semibold">{order.idorder}</span>
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Date:{" "}
+                      <span className="text-black">
+                        {new Date(order.dateordered).toLocaleDateString("fr-FR")}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm">
+                      Statut:{" "}
+                      <span
+                        className={`font-semibold ${
+                          order.status === "livré" ? "text-green-600" : "text-yellow-600"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </p>
+                    <p className="text-sm">
+                      Total:{" "}
+                      <span className="font-bold text-custom-brown">
+                        {order.totalprice} DZA
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleOrderDetails(order._id)}
+                  className="text-blue-600 hover:underline text-sm self-start"
+                >
+                  {expandedOrder === order._id
+                    ? "Masquer le résumé"
+                    : "Afficher le résumé de commande"}
+                </button>
+
+                {expandedOrder === order._id && (
+                  <div className="mt-4 border-t pt-4 flex flex-col gap-6">
+                    {order.orderitems.map((item, index) => (
+                      <div key={index} className="flex gap-4 border-b pb-4">
+                        <Image
+                          src={item.product?.images[0] || "/placeholder.jpg"}
+                          alt={item.product?.name || "Image du produit"}
+                          width={100}
+                          height={100}
+                          className="rounded-lg object-cover w-24 h-24"
+                        />
+                        <div className="flex flex-col text-sm gap-1">
+                          <p>
+                            <span className="font-semibold">Titre:</span>{" "}
+                            {item.product?.name || "Produit inconnu"}
+                          </p>
+                          <p>
+                            <span className="font-semibold">Couleur:</span> {item.color}
+                          </p>
+                          {item.size && (
+                            <p>
+                              <span className="font-semibold">Taille:</span> {item.size}
+                            </p>
+                          )}
+                          <p>
+                            <span className="font-semibold">Prix unitaire:</span>{" "}
+                            {item.product?.Price} DZA
+                          </p>
+                          <p>
+                            <span className="font-semibold">Quantité:</span> {item.quantity}
+                          </p>
+                          <p>
+                            <span className="font-semibold">Total:</span> {item.priceproduct} DZA
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Orders;
