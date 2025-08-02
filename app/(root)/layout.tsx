@@ -8,15 +8,11 @@ export const metadata: Metadata = {
   description: "Découvrez nos collections exclusives de vêtements qui allient confort, style et modernité.",
   openGraph: {
     title: "MEERI Store",
-    description: "Élégance et Qualité pour Chaque Femme",
-    images: [
-      {
-        url: "/logo.png", 
-        width: 800,
-        height: 600,
-        alt: "MEERI Store Logo",
-      }
-    ]
+    description: "Parce que chaque femme mérite de se sentir belle et confiante.",
+    images: [{
+      url: "/logo.png", // Ensure this path is correct
+      alt: "MEERI Store Logo",
+    }]
   }
 };
 
