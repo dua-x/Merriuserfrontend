@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ['res.cloudinary.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'meeristore.store', // Your domain
+      },
+    ],
   },
   // Add this to properly handle Suspense boundaries
   reactStrictMode: true,
