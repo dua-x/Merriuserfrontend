@@ -303,41 +303,40 @@ export const getSearchedProducts = async (query: string) => {
             `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
             {
                 query: `
-                    query{
-                        productGETByname(name : "${query}"){
-                                            name
-                                            description
-                                            richDescription
-                                            brand
-                                            Price
-                                            category
-                                            CountINStock
-                                            rating
-                                            IsFeatured
-                                            productdetail {
-                                                color
-                                                sizes {
-                                                    size
-                                                    stock
-                                                }
+                    query {
+                        productGETByname(name: "${query}") {
+                            _id
+                            name
+                            description
+                            richDescription
+                            images
+                            brand
+                            Price
+                            category {
+                                name
+                            }
+                            CountINStock
+                            rating
+                            IsFeatured
+                            productdetail {
+                                color
+                                sizes {
+                                    size
+                                    stock
+                                }
+                            }
                         }
-
-                  }
-                }
+                    }
                 `
-            },
-
+            }
         );
 
         const result = response.data.data.productGETByname;
         return result;
-
-
     } catch (error) {
         console.error("Error fetching products:", error);
-        return error;
+        return [];
     }
-
 }
 export const getProducts = async () => {
     try {

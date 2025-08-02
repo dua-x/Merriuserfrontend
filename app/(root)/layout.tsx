@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import ContactUs from '@/components/ContactUs';
 
 export const metadata: Metadata = {
-  title: "Merri Store",
+  title: "Meeri Store",
   description: "Merri Ecomerce Store",
 };
 
