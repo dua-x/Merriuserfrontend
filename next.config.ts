@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'meeristore.store', // Your domain
+        port: '', // Leave empty if default
+        pathname: '/**', // Allows all paths
       },
     ],
   },
