@@ -143,7 +143,52 @@ export const getOrdersByUser = async () => {
         return error;
     }
 };
-
+export const searchorderbyid = async (id: string) => {
+    try {
+        const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/searchorderbyid`,
+            {
+                query: `
+                    query {
+                        searchorderbyid(id: "${id}") {
+                            _id
+                            idorder
+                            orderitems {
+                                _id
+                                quantity
+                                product {
+                                    name
+                                    images
+                                    Price
+                                }
+                                size 
+                                color
+                                priceproduct
+                            }
+                            status
+                            totalprice
+                            dateordered
+                        }
+                    }
+                `,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        
+        if (response.data.errors) {
+            throw new Error(response.data.errors[0].message);
+        }
+        
+        return response.data.data.searchorderbyid;
+    } catch (error) {
+        console.error("Error searching order:", error);
+        throw error;
+    }
+};
 ///CART  updated 
 export const createcarte = async (
     productId: string,
@@ -352,6 +397,7 @@ export const getProducts = async () => {
               description
               Price
               images
+              IsFeatured
               category{
               name}
             }

@@ -73,7 +73,7 @@ const Navbar = () => {
                         Wishlist
                         <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white group-hover:w-full transition-all duration-300"></span>
                     </Link>
-                    <Link href={user ? '/orders' : '/signin'} className="relative group text-gray-100 hover:text-white transition-colors duration-300">
+                    <Link href={'/orders' } className="relative group text-gray-100 hover:text-white transition-colors duration-300">
                         Orders
                         <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white group-hover:w-full transition-all duration-300"></span>
                     </Link>
@@ -117,7 +117,7 @@ const Navbar = () => {
                     <Link href={user ? '/wishlist' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
                         Wishlist
                     </Link>
-                    <Link href={user ? '/orders' : '/signin'} className="hover:text-custom-beige transition-colors duration-300">
+                    <Link href={ '/orders' } className="hover:text-custom-beige transition-colors duration-300">
                         Orders
                     </Link>
                     <Link href={user ? '/Cart' : '/signin'} className="flex items-center gap-1 border rounded-md px-2 py-1 hover:bg-custom-beige hover:text-white transition-colors duration-300">

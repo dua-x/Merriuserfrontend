@@ -40,6 +40,11 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
     const [canScrollRight, setCanScrollRight] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
+    // Filter products to only show featured ones
+    const featuredProducts = products.filter(product => product.IsFeatured === true
+
+    );
+
     const checkScrollPosition = () => {
         if (!containerRef.current) return;
         const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
@@ -55,7 +60,7 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
             return () =>
                 container.removeEventListener("scroll", checkScrollPosition);
         }
-    }, [products]);
+    }, [featuredProducts]); // Changed from products to featuredProducts
 
     useEffect(() => {
         if (containerRef.current) {
@@ -81,18 +86,18 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
         }
     };
 
-    // Défilement automatique
+    // Auto-scrolling
     useEffect(() => {
         if (isHovered || !containerRef.current) return;
 
         const interval = setInterval(() => {
             containerRef.current?.scrollBy({
-                left: 250, // Taille d'un élément environ
+                left: 250,
                 behavior: "smooth",
             });
 
             checkScrollPosition();
-        }, 2500); // Défilement toutes les 2.5 secondes
+        }, 2500);
 
         return () => clearInterval(interval);
     }, [isHovered]);
@@ -122,12 +127,12 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
                     className="grid grid-flow-col auto-cols-[220px] items-center gap-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full py-4"
                     style={{ scrollPaddingLeft: "16px" }}
                 >
-                    {products.length === 0 ? (
+                    {featuredProducts.length === 0 ? (
                         <p className="text-red-500 text-center w-full">
-                            No products found
+                            No featured products found
                         </p>
                     ) : (
-                        products.map((product) => (
+                        featuredProducts.map((product) => (
                             <div
                                 key={product._id}
                                 className="snap-center shadow-md rounded-lg bg-white flex justify-center items-center transition-transform hover:scale-105"
