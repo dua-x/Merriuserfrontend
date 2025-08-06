@@ -81,7 +81,12 @@ export const handleUserinfo = async () => {
         return error;
     }
 }
+/*where is the error?? in getorderbyuser  ana dertha hadi
+makntch kyna ou lerreur f si
 
+*/
+//okey let me check  win raki tkhdmi  biha??
+ 
 export const getOrdersByUser = async () => {
     try {
         const token = localStorage.getItem('authtoken');
@@ -89,44 +94,46 @@ export const getOrdersByUser = async () => {
             `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/orderGET`,
             {
                 query: `
-        query {
-        userorderGET {
-            order {
-            _id
-            idorder
-            orderitems {
-            _id
-            quantity
-            product{
+                query {
+                userorderGET {
+                    order {
+                    _id
+                    idorder
+                    orderitems {
+                    _id
+                    quantity
+                    product{
 
-                name
-                images
-                Price
-            }
-            size 
-            color
-            priceproduct
-            createdAt
-            updatedAt
-            }
-            adress
-            wilaya
-            commune
-            phonenumber
-            status
-            totalprice
-            quantityOrder
-            user{
-                _id
-                username
-            }
-            dateordered
-            createdAt
-            updatedAt
-        }
-        message
-        }
-        }
+                        name
+                        images
+                        Price
+                    }
+                    size 
+                    color
+                    priceproduct
+                    createdAt
+                    updatedAt
+                    }
+                    adress
+                    wilaya
+                    commune
+                    phonenumber
+                    status
+                    totalprice
+                    quantityOrder
+                    user{
+                        _id
+                        username
+                    }
+                    dateordered
+                    createdAt
+                    updatedAt
+                }
+                message
+                }
+                }
+
+
                 `,
             },
             {
@@ -144,46 +151,18 @@ export const getOrdersByUser = async () => {
     }
 };
 export const searchorderbyid = async (id: string) => {
-    try {
-        const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/searchorderbyid`,
-            {
-                query: `
-                    query {
-                        searchorderbyid(id: "${id}") {
-                            _id
-                            idorder
-                            orderitems {
-                                _id
-                                quantity
-                                product {
-                                    name
-                                    images
-                                    Price
-                                }
-                                size 
-                                color
-                                priceproduct
-                            }
-                            status
-                            totalprice
-                            dateordered
-                        }
-                    }
-                `,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
+    try { // hadi get function machi post 
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/searchorderbyid/${id}`,
+            
+          
         );
         
         if (response.data.errors) {
             throw new Error(response.data.errors[0].message);
         }
         
-        return response.data.data.searchorderbyid;
+        return response.data.order
     } catch (error) {
         console.error("Error searching order:", error);
         throw error;

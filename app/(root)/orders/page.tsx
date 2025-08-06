@@ -105,22 +105,30 @@ const Orders = () => {
     const handleGuestSearch = async () => {
         if (!searchTerm.trim()) return;
         
-        setIsLoading(true);
+        setIsLoading(true); 
         setError(null);
         try {
             const order = await searchorderbyid(searchTerm);
-            if (order) {
-                setGuestOrder(order);
+            if (!order) {
+              throw new Error('ORDER_NOT_FOUND');
+            } 
+            setGuestOrder(order);
+         } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === 'ORDER_NOT_FOUND') {
+                setError("No order found with this ID. Please check your order number and try again.");
+            } else if (err.message.includes('Network Error')) {
+                setError("Network error. Please check your internet connection and try again.");
             } else {
-                setGuestOrder(null);
-                setError("No order found with this ID");
+                setError("Failed to search order. Please try again.");
             }
-        } catch (err) {
-            setError("Failed to search order. Please try again.");
-            console.error("Error searching order:", err);
-        } finally {
-            setIsLoading(false);
+        } else {
+            setError("An unexpected error occurred. Please try again.");
         }
+        console.error("Error searching order:", err);
+    } finally {
+        setIsLoading(false);
+    }
     };
 
     const toggleOrderDetails = (orderId: string) => {
