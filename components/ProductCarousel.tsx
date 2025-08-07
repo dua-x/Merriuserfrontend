@@ -1,8 +1,13 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
+import { getfeaturedproduct } from "@/lib/action";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { playfair } from "@/app/fonts/font";
+
+interface ProductCarouselProps {
+    initialProducts: ProductType[];
+}
 
 const ChevronButton = ({
     direction,
@@ -34,16 +39,14 @@ const ChevronButton = ({
     );
 };
 
-const ProductCarousel = ({ products }: { products: ProductType[] }) => {
+const ProductCarousel = ({ initialProducts }: ProductCarouselProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [featuredProducts, setFeaturedProducts] = useState<ProductType[]>(initialProducts);
+    const [loading, setLoading] = useState(false);
 
-    // Filter products to only show featured ones
-    const featuredProducts = products.filter(product => product.IsFeatured === true
-
-    );
 
     const checkScrollPosition = () => {
         if (!containerRef.current) return;
@@ -53,6 +56,27 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
     };
 
     useEffect(() => {
+        const refreshProducts = async () => {
+            setLoading(true);
+            try {
+                const products = await getfeaturedproduct();
+                setFeaturedProducts(products);
+            } catch (error) {
+                console.error("Error refreshing products:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Refresh immediately on mount
+        refreshProducts();
+
+        // Set up periodic refresh (every 30 seconds)
+        const interval = setInterval(refreshProducts, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
         checkScrollPosition();
         const container = containerRef.current;
         if (container) {
@@ -60,7 +84,7 @@ const ProductCarousel = ({ products }: { products: ProductType[] }) => {
             return () =>
                 container.removeEventListener("scroll", checkScrollPosition);
         }
-    }, [featuredProducts]); // Changed from products to featuredProducts
+    }, [featuredProducts]);
 
     useEffect(() => {
         if (containerRef.current) {

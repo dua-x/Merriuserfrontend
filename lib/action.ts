@@ -361,7 +361,49 @@ export const getSearchedProducts = async (query: string) => {
         console.error("Error fetching products:", error);
         return [];
     }
-}
+}  // hadi trj3lk hado 
+/*
+   query { featuredproductGET { name description richDescription images brand Price category{
+    name
+   } CountINStock rating IsFeatured productdetail { color sizes { size stock } } } }
+    thbi trj3i ga3 hado raj3iom
+*/
+export const getfeaturedproduct = async () => {
+    try { 
+
+        const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
+            {
+                query: `
+          query {
+            featuredproductGET {
+              _id
+              name
+              description
+              Price
+              images
+              IsFeatured
+              category{
+              name}
+            }
+          }
+        `,
+            }
+
+        );
+
+
+        if (!response.data) {
+            throw new Error("Failed to fetch products");
+        }
+
+        const products = response.data.data.featuredproductGET; // Adjust this based on API response structure
+        return products;
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        throw error;
+    }
+};
 export const getProducts = async () => {
     try {
 

@@ -1,10 +1,11 @@
-import ProductCarousel from "./ProductCarousel"; // Client Component
-import { getProducts } from "@/lib/action"; // Server function
+import ProductCarousel from "./ProductCarousel";
+import { getfeaturedproduct } from "@/lib/action";
+
+export const revalidate = 0;
 
 const ProductList = async () => {
-  const products = await getProducts();
-
-  return <ProductCarousel products={products} />; 
+    const featuredProducts = await getfeaturedproduct();
+    return <ProductCarousel initialProducts={featuredProducts} />;
 };
 
 export default ProductList;
