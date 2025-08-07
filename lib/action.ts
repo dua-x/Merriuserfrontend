@@ -81,12 +81,8 @@ export const handleUserinfo = async () => {
         return error;
     }
 }
-/*where is the error?? in getorderbyuser  ana dertha hadi
-makntch kyna ou lerreur f si
 
-*/
-//okey let me check  win raki tkhdmi  biha??
- 
+
 export const getOrdersByUser = async () => {
     try {
         const token = localStorage.getItem('authtoken');
@@ -174,7 +170,7 @@ export const createcarte = async (
     quantity: number,
     size: string,
     color: string
-) => {
+    ) => {
     try {
         const token = localStorage.getItem("authtoken");
         if (!token) {
@@ -321,53 +317,62 @@ export const DeleteProductFromCart = async (ProductId: string) => {
 
 }
 ///PRODUCT
-export const getSearchedProducts = async (query: string) => {
-    try {
-        const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
-            {
-                query: `
-                    query {
-                        productGETByname(name: "${query}") {
-                            _id
-                            name
-                            description
-                            richDescription
-                            images
-                            brand
-                            Price
-                            category {
-                                name
-                            }
-                            CountINStock
-                            rating
-                            IsFeatured
-                            productdetail {
-                                color
-                                sizes {
-                                    size
-                                    stock
-                                }
-                            }
-                        }
-                    }
-                `
-            }
-        );
-
-        const result = response.data.data.productGETByname;
-        return result;
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        return [];
+export const getSearchedProducts = async (query: string): Promise<ProductType[]> => {
+  try {
+    if (!query || typeof query !== 'string') {
+      throw new Error('Invalid search query');
     }
-}  // hadi trj3lk hado 
-/*
-   query { featuredproductGET { name description richDescription images brand Price category{
-    name
-   } CountINStock rating IsFeatured productdetail { color sizes { size stock } } } }
-    thbi trj3i ga3 hado raj3iom
-*/
+
+    const sanitizedQuery = query.replace(/"/g, '\\"');
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
+      {
+        query: `
+          query {
+            productGETByPartialName(name: "${sanitizedQuery}") {
+              _id
+              name
+              description
+              richDescription
+              images
+              brand
+              Price
+              category {
+                name
+              }
+              CountINStock
+              rating
+              IsFeatured
+              productdetail {
+                color
+                sizes {
+                  size
+                  stock
+                }
+              }
+            }
+          }
+        `
+      },
+      {
+        timeout: 5000,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    if (!response.data?.data?.productGETByPartialName) {
+      throw new Error('Invalid response structure from API');
+    }
+
+    return response.data.data.productGETByPartialName;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
+};
 export const getfeaturedproduct = async () => {
     try { 
 

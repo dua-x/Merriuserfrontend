@@ -112,6 +112,11 @@ export default function SignIn() {
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
+                        <div className="text-right mt-1">
+                            <a href="/forgotPassword" className="text-sm text-blue-600 underline">
+                                Forgot password?
+                            </a>
+                        </div>
                     </div>
 
                     <div className="d-grid">
