@@ -35,7 +35,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "components/Signin.jsx"
-, "app/(root)/forgotPassword/page.js"  ],
+, "app/(root)/forgotPassword/page.js", "app/(root)/resetPassword/page.tsx"  ],
   "exclude": [
     "node_modules"
   ]

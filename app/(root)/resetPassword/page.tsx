@@ -1,10 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 
-export default function ResetPassword() {
+// Wrap the main component with Suspense
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [password, setPassword] = useState("");
@@ -13,7 +22,7 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
@@ -26,20 +35,17 @@ export default function ResetPassword() {
     setMessage("");
 
     try {
-        
-  
-         const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/users/setpassword/${token}`,
-      { password }
-    );
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/users/setpassword/${token}`,
+        { password }
+      );
 
-      const result = response.dataresetPassword;
-       if (response.data.success) {
-      setMessage(response.data.message || "Password reset successfully. You can now sign in.");
-    } else {
-      setError(response.data.message || "Failed to reset password.");
-    }
-    } catch (error) {
+      if (response.data.success) {
+        setMessage(response.data.message || "Password reset successfully. You can now sign in.");
+      } else {
+        setError(response.data.message || "Failed to reset password.");
+      }
+    } catch (error: any) {
       setError(
         error.response?.data?.errors?.[0]?.message ||
         "An error occurred. Please try again later."
@@ -49,7 +55,7 @@ export default function ResetPassword() {
     }
   };
 
-    if (!token) {
+  if (!token) {
     return (
       <div className="form-container">
         <div className="form-card">
@@ -68,8 +74,7 @@ export default function ResetPassword() {
     );
   }
 
-
-    return (
+  return (
     <form onSubmit={handleSubmit} className="form-container">
       <div className="form-card">
         <h1 className="text-xl font-semibold mb-4">Reset Your Password</h1>
