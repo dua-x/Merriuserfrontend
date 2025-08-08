@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { userCart, DeleteProductFromCart } from "@/lib/action";
 import {ShoppingBag } from "lucide-react";
+import { playfair } from "@/app/fonts/font";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
@@ -163,7 +164,10 @@ const Cart = () => {
     return (
         <div className="flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-3">
             <div className="w-2/3 max-lg:w-full">
-                <p className="text-heading3-bold">Shopping Cart</p>
+                <h1 className={`${playfair.className} text-3xl font-bold drop-shadow-lg mt-10 leading-tight tracking-wide 
+                 text-2xl font-semibold text-custom-brown drop-shadow-lg`}>
+                    Shopping Cart
+                  </h1>
                 <hr className="my-6" />
 
                 {cart.ProductList.map((cartItem: any) => (

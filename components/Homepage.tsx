@@ -12,7 +12,7 @@ export default function Homepage() {
     return (
         <>
              {/* Enhanced Banner Section */}
-            <div className="relative w-full h-[70vh] min-h-[500px] max-h-[900px] overflow-hidden">
+            <div className="relative w-full h-[70vh] min-h-[500px] max-h-[900px]overflow-hidden">
                 {/* Background Image with better scaling */}
                 <div className="absolute inset-0 w-full h-full">
                     <Image

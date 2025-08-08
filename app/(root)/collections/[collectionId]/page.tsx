@@ -12,7 +12,7 @@ const CollectionDetails = async ({ params }: { params: Promise<{ collectionId: s
     }
 
     return (
-        <div className="m-1 justify-center">
+        <div className="mt-6 m-1 justify-center">
             <CollectionsMenu selectedCollectionId={collectionId} />
             <h1 className="text-center text-2xl font-semibold text-gray-800 m-6">
                 {collectionDetails.category?.name}

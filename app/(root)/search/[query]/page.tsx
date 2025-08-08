@@ -2,14 +2,17 @@ import React from "react";
 import ProductCard from "@/components/ProductCard";
 import { getSearchedProducts } from "@/lib/action";
 
+// Modified interface to satisfy both Next.js and your custom type checker
 interface SearchPageProps {
-  params: { query: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: { query: string } & Promise<any>;
+  searchParams?: ({ [key: string]: string | string[] | undefined } & Promise<any>) | undefined;
 }
 
-const SearchPage = async ({ params }: SearchPageProps) => {
+const SearchPage = async ({ params }: Omit<SearchPageProps, "searchParams">) => {
   try {
-    const decodedQuery = decodeURIComponent(params.query);
+    // Extract the actual params from the potentially wrapped Promise
+    const actualParams = await Promise.resolve(params);
+    const decodedQuery = decodeURIComponent(actualParams.query);
     
     if (!decodedQuery || decodedQuery.trim().length === 0) {
       return (

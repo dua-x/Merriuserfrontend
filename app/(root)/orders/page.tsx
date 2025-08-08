@@ -136,11 +136,11 @@ const Orders = () => {
     };
 
     return (
-        <div className="flex flex-col items-center py-16 px-6 md:px-12">
-            <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown mb-10 text-center`}>
+        <div className="flex flex-col items-center mt-6 py-16 px-6 md:px-12">
+            <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown `}>
                 Order Tracking
             </h1>
-
+s
             {/* Search Section */}
             <div className="w-full max-w-2xl mb-8">
                 <div className="relative">

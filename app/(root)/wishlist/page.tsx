@@ -52,7 +52,7 @@ const Wishlist = () => {
     }
 
     return (
-        <div className="px-6 lg:px-20 py-10 bg-gray-40 min-h-screen max-w-[1600px] mx-auto">
+        <div className="px-6 lg:px-20 py-10 mt-10 bg-gray-40 min-h-screen max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-10">
                 <h1 className="text-3xl font-bold text-[#857B74] drop-shadow-lg">
                     Your Wishlist <Heart className="inline-block text-red-500" />

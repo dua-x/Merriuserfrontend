@@ -316,10 +316,10 @@ const EditUser = () => {
 };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="max-w-lg mx-auto p-6 mt-12">
+      <div className="bg-white rounded-lg shadow-md p-4">
         <form onSubmit={handleEdit} className="mb-6">
-          <h1 className="text-2xl font-bold text-center mb-6">Edit Your Information</h1>
+          <h1 className="text-2xl font-bold text-center mb-4">Edit Your Information</h1>
 
           {errors.general && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">

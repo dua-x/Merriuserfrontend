@@ -56,47 +56,95 @@ const CartButton = ({ count, onClick, user }: { count: number; onClick: () => vo
   </Link>
 );
 
-const UserDropdown = ({ user, router }: { user: any; router: any }) => (
-  <div className="transition-all duration-300">
-    <div className="p-4 border-b border-gray-100">
-      <div className="flex flex-col items-center text-center">
-        <div className="w-12 h-12 rounded-full bg-custom-beige/10 flex items-center justify-center mb-2">
-          <CircleUserRound className="text-gray-600 w-6 h-6" />
+const UserDropdown = ({ user, router, onClose }: { 
+  user: any; 
+  router: any;
+  onClose: () => void;
+}) => {
+  // Handle click outside is already handled by parent component
+  
+  return (
+    <div 
+      className="transition-all duration-300 bg-white rounded-lg shadow-lg overflow-hidden"
+      style={{
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+      }}
+    >
+      {/* User Profile Section */}
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-full bg-custom-beige/10 flex items-center justify-center mb-2">
+            {user?.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt="User avatar" 
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <CircleUserRound className="text-gray-600 w-6 h-6" />
+            )}
+          </div>
+          <p className="font-semibold text-gray-800 truncate max-w-full px-2">
+            {user ? user.username : 'Guest'}
+          </p>
+          {user?.email && (
+            <p className="text-xs text-gray-500 truncate max-w-full px-2">
+              {user.email}
+            </p>
+          )}
         </div>
-        <p className="font-semibold text-gray-800">{user ? user.username : 'Guest'}</p>
-        <p className="text-xs text-gray-500">{user ? user.email : 'guest@example.com'}</p>
+      </div>
+      
+      {/* Dropdown Menu Items */}
+      <div className="p-2">
+        {user ? (
+          <>
+            <button
+              onClick={() => {
+                router.push('/edituser');
+                onClose();
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200 flex items-center"
+              aria-label="Edit profile"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit Profile
+            </button>
+            
+            <button
+              onClick={() => {
+                localStorage.removeItem('authtoken');
+                window.location.reload();
+                onClose();
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200 flex items-center"
+              aria-label="Log out"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Log out
+            </button>
+          </>
+        ) : (
+          <Link 
+            href="/signin" 
+            onClick={onClose}
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200 flex items-center"
+            aria-label="Sign in"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            Sign In
+          </Link>
+        )}
       </div>
     </div>
-    <div className="p-2">
-      {user ? (
-        <>
-          <button
-            onClick={() => router.push('/edituser')}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200"
-          >
-            Edit Profile
-          </button>
-          <button
-            onClick={() => {
-              localStorage.removeItem('authtoken');
-              window.location.reload();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200"
-          >
-            Log out
-          </button>
-        </>
-      ) : (
-        <Link 
-          href="/signin" 
-          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors duration-200"
-        >
-          Sign In
-        </Link>
-      )}
-    </div>
-  </div>
-);
+  );
+};
 
 const MobileMenu = ({ user, cartItemCount, fetchCartData, onSearchClick }: { 
   user: any, 
@@ -216,23 +264,33 @@ const Navbar = () => {
   }, [isClient]);
 
   // Click outside handlers
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownMenu(false);
-      }
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
-        setUserDropdown(false);
-      }
-      if (searchRef.current && !searchRef.current.contains(event.target as Node) && 
-          !(event.target instanceof SVGElement && event.target.closest('.search-icon'))) {
-        setShowSearch(false);
-      }
-    };
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Node;
+    
+    // Check if click is outside dropdown
+    if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+      setDropdownMenu(false);
+    }
+    
+    // Check if click is outside user dropdown and not on the user button
+    const userButton = document.querySelector('[aria-label="User menu"]');
+    if (userDropdownRef.current && 
+        !userDropdownRef.current.contains(target) && 
+        userButton && !userButton.contains(target)) {
+      setUserDropdown(false);
+    }
+    
+    if (searchRef.current && 
+        !searchRef.current.contains(target) && 
+        !(target instanceof SVGElement && target.closest('.search-icon'))) {
+      setShowSearch(false);
+    }
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
   // Focus search input when shown
   useEffect(() => {
@@ -260,8 +318,8 @@ const Navbar = () => {
 
   return (
     <>
-<nav className={`fixed top-0 w-full z-50 py-3 px-6 transition-all duration-300 bg-custom-beige/90 backdrop-blur-sm text-white`}>
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <nav className={`fixed top-0 w-full z-50 py-3 px-6 transition-all duration-300 bg-custom-beige/90 backdrop-blur-sm text-white`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* LEFT: NAVIGATION (DESKTOP) */}
           <div className="hidden lg:flex items-center space-x-8">
             <NavLink href="/" pathname={pathname}>
@@ -329,7 +387,10 @@ const Navbar = () => {
 
             <button 
               className="p-1 transition-all duration-200 hover:scale-110 focus:outline-none"
-              onClick={() => setUserDropdown(!userDropdown)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setUserDropdown(prev => !prev); // Toggle based on previous state
+              }}
               aria-label="User menu"
             >
               <CircleUserRound className="w-6 h-6" />
@@ -377,16 +438,21 @@ const Navbar = () => {
 
       {/* USER DROPDOWN */}
       {userDropdown && (
-        <div 
-          ref={userDropdownRef}
-          className="fixed top-16 right-4 z-50 bg-white rounded-lg shadow-xl overflow-hidden w-56 animate-fadeIn"
-        >
-          <UserDropdown 
-            user={user}
-            router={router}
-          />
-        </div>
-      )}
+      <div 
+        ref={userDropdownRef}
+        className="fixed top-16 right-4 z-50 animate-fadeIn"
+        onClick={(e) => e.stopPropagation()} // Add this to prevent clicks inside dropdown from closing it
+        style={{
+          animation: 'fadeIn 0.2s ease-out'
+        }}
+      >
+        <UserDropdown 
+          user={user}
+          router={router}
+          onClose={() => setUserDropdown(false)}
+        />
+      </div>
+    )}
     </>
   );
 };
