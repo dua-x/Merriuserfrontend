@@ -174,13 +174,15 @@ const Cart = () => {
                     <div key={cartItem.Productid._id} className="w-full flex max-sm:gap-3 hover:bg-grey-1 px-4 py-3 items-center max-sm:items-start justify-between">
                         <Link href={`/products/${cartItem.Productid._id}`}>
                             <div className="flex items-center">
-                                <Image
-                                    src={cartItem.Productid.image || "/placeholder.png"}
-                                    width={100}
-                                    height={100}
-                                    className="rounded-lg w-32 h-32 object-cover"
-                                    alt="product"
-                                />
+                                <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
+                                    <Image
+                                        src={cartItem.Productid.images[0] || "/placeholder.png"}
+                                        alt="product"
+                                        width={100}
+                                        height={133} // keep ratio in metadata
+                                        className="h-full w-full object-cover"
+                                    />
+                                    </div>
                                 <div className="flex flex-col gap-3 ml-4">
                                     <p className="text-body-bold">{cartItem.Productid.name}</p>
                                     <p className="text-small-medium">${cartItem.Productid.Price}</p>

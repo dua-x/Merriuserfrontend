@@ -554,14 +554,15 @@ const Checkout = () => {
         <div className="space-y-4">
           {cart?.ProductList?.map((cartItem: ProductItem) => (
             <div key={cartItem.Productid._id} className="flex items-center gap-4 p-3 border-b">
-              <div className="relative w-16 h-16">
-                <Image 
-                  src={cartItem.Productid.image || "/placeholder.png"} 
-                  fill
-                  className="rounded-lg object-cover" 
-                  alt={cartItem.Productid.name} 
+             <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
+                <Image
+                    src={cartItem.Productid.images[0] || "/placeholder.png"}
+                    alt="product"
+                    width={100}
+                    height={133} // keep ratio in metadata
+                    className="h-full w-full object-cover"
                 />
-              </div>
+                </div>
               <div className="flex-1">
                 <p className="font-medium">{cartItem.Productid.name}</p>
                 {cartItem.color && <p className="text-sm">Color: {cartItem.color}</p>}

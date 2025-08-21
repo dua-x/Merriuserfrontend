@@ -54,13 +54,11 @@ const Orders = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    // Check authentication status
     useEffect(() => {
         const token = localStorage.getItem('authtoken');
         setIsLoggedIn(!!token);
     }, []);
 
-    // Fetch orders for authenticated users
     useEffect(() => {
         if (!isLoggedIn) return;
 
@@ -77,8 +75,8 @@ const Orders = () => {
                     setFilteredOrders(sortedOrders);
                 }
             } catch (err) {
-                setError("Failed to load orders. Please try again.");
-                console.error("Error fetching orders:", err);
+                setError("Échec du chargement des commandes. Veuillez réessayer.");
+                console.error("Erreur lors du chargement des commandes :", err);
             } finally {
                 setIsLoading(false);
             }
@@ -87,7 +85,6 @@ const Orders = () => {
         fetchOrders();
     }, [isLoggedIn]);
 
-    // Filter orders based on search term
     useEffect(() => {
         if (!isLoggedIn) return;
         
@@ -101,7 +98,6 @@ const Orders = () => {
         }
     }, [searchTerm, orders, isLoggedIn]);
 
-    // Handle guest order search
     const handleGuestSearch = async () => {
         if (!searchTerm.trim()) return;
         
@@ -116,16 +112,16 @@ const Orders = () => {
          } catch (err) {
         if (err instanceof Error) {
             if (err.message === 'ORDER_NOT_FOUND') {
-                setError("No order found with this ID. Please check your order number and try again.");
+                setError("Aucune commande trouvée avec cet identifiant. Vérifiez votre numéro de commande et réessayez.");
             } else if (err.message.includes('Network Error')) {
-                setError("Network error. Please check your internet connection and try again.");
+                setError("Erreur réseau. Vérifiez votre connexion internet et réessayez.");
             } else {
-                setError("Failed to search order. Please try again.");
+                setError("Échec de la recherche de la commande. Veuillez réessayer.");
             }
         } else {
-            setError("An unexpected error occurred. Please try again.");
+            setError("Une erreur inattendue est survenue. Veuillez réessayer.");
         }
-        console.error("Error searching order:", err);
+        console.error("Erreur lors de la recherche de commande :", err);
     } finally {
         setIsLoading(false);
     }
@@ -138,15 +134,15 @@ const Orders = () => {
     return (
         <div className="flex flex-col items-center mt-6 py-16 px-6 md:px-12">
             <h1 className={`${playfair.className} text-4xl font-bold text-custom-brown `}>
-                Order Tracking
+                Suivi de commandes
             </h1>
-s
-            {/* Search Section */}
+
+            {/* Barre de recherche */}
             <div className="w-full max-w-2xl mb-8">
                 <div className="relative">
                     <input
                         type="text"
-                        placeholder="Search by order ID..."
+                        placeholder="Rechercher par numéro de commande..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A484]"
@@ -160,40 +156,40 @@ s
                         disabled={isLoading}
                         className="mt-4 w-full bg-[#C4A484] hover:bg-[#a98c68] text-white font-semibold py-3 px-6 rounded-lg transition disabled:opacity-50"
                     >
-                        {isLoading ? "Searching..." : "Track My Order"}
+                        {isLoading ? "Recherche en cours..." : "Suivre ma commande"}
                     </button>
                 )}
             </div>
 
-            {/* Error Message */}
+            {/* Message d'erreur */}
             {error && (
                 <div className="w-full max-w-4xl mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                     {error}
                 </div>
             )}
 
-            {/* Loading State */}
+            {/* Chargement */}
             {isLoading && (
                 <div className="text-center py-12">
-                    <p className="text-lg text-gray-500">Loading...</p>
+                    <p className="text-lg text-gray-500">Chargement...</p>
                 </div>
             )}
 
-            {/* Content */}
+            {/* Contenu */}
             {!isLoading && (
                 <>
-                    {/* Authenticated User View */}
+                    {/* Utilisateur connecté */}
                     {isLoggedIn && (
                         <>
                             {filteredOrders.length === 0 ? (
                                 <div className="text-center mt-12">
                                     {searchTerm ? (
                                         <p className="text-lg text-gray-500 mb-6">
-                                            No orders found with ID "{searchTerm}"
+                                            Aucune commande trouvée avec l’ID "{searchTerm}"
                                         </p>
                                     ) : (
                                         <p className="text-lg text-gray-500 mb-6">
-                                            You don't have any orders yet.
+                                            Vous n’avez pas encore passé de commande.
                                         </p>
                                     )}
                                     <button
@@ -201,7 +197,7 @@ s
                                         className="inline-flex items-center gap-2 bg-[#C4A484] hover:bg-[#a98c68] text-white font-semibold py-3 px-6 rounded-lg transition"
                                     >
                                         <ShoppingBag />
-                                        Start Shopping
+                                        Commencer mes achats
                                     </button>
                                 </div>
                             ) : (
@@ -219,7 +215,7 @@ s
                         </>
                     )}
 
-                    {/* Guest User View */}
+                    {/* Utilisateur invité */}
                     {!isLoggedIn && guestOrder && (
                         <div className="w-full max-w-4xl">
                             <OrderItem
@@ -232,7 +228,7 @@ s
 
                     {!isLoggedIn && !guestOrder && searchTerm && !error && (
                         <p className="text-lg text-gray-500 mb-6">
-                            Enter your order ID to track your order status
+                            Entrez votre numéro de commande pour suivre son état
                         </p>
                     )}
                 </>
@@ -241,7 +237,7 @@ s
     );
 };
 
-// Order Item Component
+// Composant d'une commande
 const OrderItem = ({ 
     order, 
     expandedOrder, 
@@ -254,16 +250,16 @@ const OrderItem = ({
     return (
         <div className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition bg-white">
             <div className="flex flex-col gap-4">
-                {/* Order Header */}
+                {/* En-tête commande */}
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                     <div>
                         <p className="text-gray-700 text-sm font-medium mb-1">
-                            Order ID: <span className="font-semibold">{order.idorder}</span>
+                            Numéro de commande : <span className="font-semibold">{order.idorder}</span>
                         </p>
                         <p className="text-gray-500 text-sm">
-                            Date:{" "}
+                            Date :{" "}
                             <span className="text-black">
-                                {new Date(order.dateordered).toLocaleDateString("en-US", {
+                                {new Date(order.dateordered).toLocaleDateString("fr-FR", {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
@@ -271,48 +267,48 @@ const OrderItem = ({
                             </span>
                         </p>
                         <p className="text-gray-500 text-sm mt-1">
-                            Delivery to: {order.adress}, {order.commune}, {order.wilaya}
+                            Livraison à : {order.adress}, {order.commune}, {order.wilaya}
                         </p>
                     </div>
                     <div className="text-left md:text-right">
                         <p className="text-sm">
-                            Status:{" "}
+                            Statut :{" "}
                             <span
                                 className={`font-semibold ${
                                     order.status === "delivered" ? "text-green-600" : 
                                     order.status === "shipped" ? "text-blue-600" : "text-yellow-600"
                                 }`}
                             >
-                                {order.status}
+                                {order.status === "delivered" ? "Livrée" : order.status === "shipped" ? "Expédiée" : "En cours"}
                             </span>
                         </p>
                         <p className="text-sm">
-                            Total:{" "}
+                            Total :{" "}
                             <span className="font-bold text-custom-brown">
                                 {order.totalprice.toFixed(2)} DZA
                             </span>
                         </p>
                         <p className="text-sm">
-                            Contact: {order.phonenumber}
+                            Contact : {order.phonenumber}
                         </p>
                     </div>
                 </div>
 
-                {/* Toggle Details Button */}
+                {/* Bouton détails */}
                 <button
                     onClick={() => toggleOrderDetails(order._id)}
                     className="text-blue-600 hover:underline text-sm self-start flex items-center gap-1"
                 >
                     {expandedOrder === order._id ? (
                         <>
-                            <span>Hide Details</span>
+                            <span>Masquer les détails</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
                             </svg>
                         </>
                     ) : (
                         <>
-                            <span>Show Order Details</span>
+                            <span>Afficher les détails</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
@@ -320,44 +316,44 @@ const OrderItem = ({
                     )}
                 </button>
 
-                {/* Order Details */}
+                {/* Détails commande */}
                 {expandedOrder === order._id && (
                     <div className="mt-4 border-t pt-4 flex flex-col gap-6">
-                        <h3 className="font-semibold text-lg">Items</h3>
+                        <h3 className="font-semibold text-lg">Articles</h3>
                         {order.orderitems.map((item, index) => (
                             <div key={index} className="flex flex-col sm:flex-row gap-4 border-b pb-4">
-                                <div className="flex-shrink-0">
+                                <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
                                     <Image
                                         src={item.product?.images[0] || "/placeholder.jpg"}
-                                        alt={item.product?.name || "Product image"}
+                                        alt={item.product?.name || "Image produit"}
                                         width={100}
                                         height={100}
-                                        className="rounded-lg object-cover w-24 h-24"
+                                        className="h-full w-full object-cover"
                                     />
                                 </div>
                                 <div className="flex-grow">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                         <p>
-                                            <span className="font-semibold">Product:</span>{" "}
-                                            {item.product?.name || "Unknown product"}
+                                            <span className="font-semibold">Produit :</span>{" "}
+                                            {item.product?.name || "Produit inconnu"}
                                         </p>
                                         <p>
-                                            <span className="font-semibold">Unit Price:</span>{" "}
+                                            <span className="font-semibold">Prix unitaire :</span>{" "}
                                             {item.product?.Price.toFixed(2)} DZA
                                         </p>
                                         <p>
-                                            <span className="font-semibold">Color:</span> {item.color}
+                                            <span className="font-semibold">Couleur :</span> {item.color}
                                         </p>
                                         {item.size && (
                                             <p>
-                                                <span className="font-semibold">Size:</span> {item.size}
+                                                <span className="font-semibold">Taille :</span> {item.size}
                                             </p>
                                         )}
                                         <p>
-                                            <span className="font-semibold">Quantity:</span> {item.quantity}
+                                            <span className="font-semibold">Quantité :</span> {item.quantity}
                                         </p>
                                         <p>
-                                            <span className="font-semibold">Subtotal:</span>{" "}
+                                            <span className="font-semibold">Sous-total :</span>{" "}
                                             {item.priceproduct.toFixed(2)} DZA
                                         </p>
                                     </div>
@@ -365,18 +361,18 @@ const OrderItem = ({
                             </div>
                         ))}
                         
-                        {/* Shipping Information */}
+                        {/* Informations livraison */}
                         <div className="mt-4 pt-4 border-t">
-                            <h3 className="font-semibold text-lg mb-2">Shipping Information</h3>
+                            <h3 className="font-semibold text-lg mb-2">Informations de livraison</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <p className="font-semibold">Delivery Address</p>
+                                    <p className="font-semibold">Adresse</p>
                                     <p>{order.adress}</p>
                                     <p>{order.commune}, {order.wilaya}</p>
                                 </div>
                                 <div>
                                     <p className="font-semibold">Contact</p>
-                                    <p>Phone: {order.phonenumber}</p>
+                                    <p>Téléphone : {order.phonenumber}</p>
                                 </div>
                             </div>
                         </div>

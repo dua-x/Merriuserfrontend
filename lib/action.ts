@@ -244,6 +244,7 @@ export const userCart = async () => {
                     name
                     description
                     Price
+                    images
                 }
                 quantityselect
                 sum
