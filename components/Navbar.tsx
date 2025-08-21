@@ -352,6 +352,27 @@ useEffect(() => {
             </div>
           </div>
 
+            <div className="flex items-center space-x-4 lg:space-x-8">
+          
+            {/* Mobile Menu */}
+            <button 
+              className="lg:hidden p-1 transition-all duration-200 hover:scale-110 focus:outline-none"
+              onClick={() => setDropdownMenu(!dropdownMenu)}
+              aria-label="Menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+
+            {/* Mobile Search */}
+            <button 
+              className="p-1 transition-all duration-200 hover:scale-110 focus:outline-none lg:hidden"
+              onClick={() => setShowSearch(!showSearch)}
+              aria-label="Search"
+            >
+              {showSearch ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
+            </button>
+          </div>
+
           {/* CENTER: LOGO */}
           <div className="absolute left-1/2 transform -translate-x-1/2">
             <Link href="/" className="flex items-center hover:scale-105 transition-transform duration-200">
@@ -359,20 +380,14 @@ useEffect(() => {
             </Link>
           </div>
 
-          {/* MOBILE MENU BUTTON */}
-          <button 
-            className="lg:hidden p-1 transition-all duration-200 hover:scale-110 focus:outline-none"
-            onClick={() => setDropdownMenu(!dropdownMenu)}
-            aria-label="Menu"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+        
+
 
           {/* RIGHT: ACTIONS */}
           <div className="flex items-center space-x-5">
             {/* Search Button */}
             <button 
-              className="p-1 transition-all duration-200 hover:scale-110 focus:outline-none search-icon"
+              className="hidden lg:flex p-1 transition-all duration-200 hover:scale-110 focus:outline-none search-icon"
               onClick={() => setShowSearch(!showSearch)}
               aria-label="Search"
             >

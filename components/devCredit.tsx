@@ -6,12 +6,12 @@ const devCredit = () => {
     <p>
         Developed by{" "}
         <a 
-            href="https://yourportfolio.com" 
+            href="www.algerinet.com" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-white font-semibold hover:underline"
         >
-            DevTeam
+            algerinet
         </a>
     </p>
     <p>© {2025} Merri. All rights reserved.</p>

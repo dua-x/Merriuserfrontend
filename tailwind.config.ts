@@ -21,6 +21,9 @@ const config: Config = {
         'custom-brown': '#262220',
         'custom-white': '#F7F1F0',
         'brown-gray': '#857B74',
+        'custom-gold': '#D4AF37',
+        'custom-dark': '#1A1A1A',
+        'custom-light': '#F9F9F9',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'

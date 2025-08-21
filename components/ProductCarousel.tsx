@@ -157,11 +157,15 @@ const ProductCarousel = ({ initialProducts }: ProductCarouselProps) => {
                         </p>
                     ) : (
                         featuredProducts.map((product) => (
-                            <div
-                                key={product._id}
-                                className="snap-center shadow-md rounded-lg bg-white flex justify-center items-center transition-transform hover:scale-105"
+                           <div
+                            key={product._id}
+                            className="relative snap-center rounded-xl bg-white shadow-md hover:shadow-xl 
+                                        transition-all duration-500 overflow-hidden group"
                             >
-                                <ProductCard product={product} />
+                            <ProductCard product={product} />
+                            
+                            {/* Overlay CTA */}
+
                             </div>
                         ))
                     )}
