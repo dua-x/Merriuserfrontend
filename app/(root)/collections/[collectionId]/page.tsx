@@ -2,7 +2,7 @@ import ProductCard from "@/components/ProductCard";
 import { getCollectionDetails } from "@/lib/action";
 import React from "react";
 import CollectionsMenu from "@/components/CollectinMenu";
-
+import { playfair } from "@/app/fonts/font"; 
 const CollectionDetails = async ({ params }: { params: Promise<{ collectionId: string }> }) => {
     const { collectionId } = await params;
     const collectionDetails = await getCollectionDetails(collectionId); // Use the destructured value
@@ -14,10 +14,10 @@ const CollectionDetails = async ({ params }: { params: Promise<{ collectionId: s
     return (
         <div className="relative mt-6 m-1 justify-center">
             <CollectionsMenu selectedCollectionId={collectionId} />
-            <h1 className="text-center text-2xl font-semibold text-gray-800 m-6">
+            <h1 className={`${playfair.className} text-black text-center text-2xl font-bold text-gray-800 m-6`} >
                 {collectionDetails.category?.name}
             </h1>
-            <h3 className="text-black text-center max-w-[900px]">
+            <h3 className="text-black font-semibold  text-center px-10 lx:px-36 ">
                 {collectionDetails.category?.description || "No description available"}
             </h3>
            <div className="flex flex-wrap gap-8 justify-center m-8 ">

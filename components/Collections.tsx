@@ -48,7 +48,7 @@ const Collections = () => {
         <p className="text-red-500 text-center mt-5">No collections found</p>
       ) : (
         <div className="flex justify-center w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 gap-4 m-2 md:gap-6 md:m-6 max-w-[90%]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4 m-2 md:gap-6 md:m-6 max-w-[90%]">
             {collections.map((collection: CollectionType) => (
               <Link href={`/collections/${collection._id}`} key={collection._id}>
                 <div className="relative group shadow-lg rounded-xl overflow-hidden">
