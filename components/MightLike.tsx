@@ -123,10 +123,8 @@ const MightLike = ({ similarProducts }: { similarProducts: any }) => {
                     style={{ scrollPaddingLeft: "16px" }}
                     >
                         {similarProducts.product.map((product: any) => (
-                            <div
-                                key={product._id}
-                            className="snap-center p-2 shadow-md rounded-lg bg-white flex justify-center items-center transition-transform hover:scale-105"
-                            >
+                            <div key={product._id} className="relative snap-center group rounded-xl bg-white shadow-md hover:shadow-xl 
+                                        transition-all duration-500 overflow-hidden group">
                                 <ProductCard product={product} />
                             </div>
                         ))}

@@ -45,7 +45,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       />
 
       {/* Overlay bas avec nom + catégorie */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 p">
         <div className="bg-custom-beige/40 backdrop-blur-sm p-2 rounded-md">
           <p className="text-white text-lg font-bold">
             {product.name || 'Unnamed Product'}
