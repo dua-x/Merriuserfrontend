@@ -13,7 +13,7 @@ interface ProductItem {
     _id: string;
     name: string;
     Price: number;
-    image: string;
+    images: string;
   };
   quantityselect: number;
   color?: string;
@@ -63,7 +63,7 @@ const Checkout = () => {
                 _id: productData.productId,
                 name: productData.name,
                 Price: productData.price,
-                image: productData.image
+                images: productData.image
               },
               quantityselect: productData.quantity,
               color: productData.color,
