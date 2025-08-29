@@ -97,7 +97,7 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
 
   return (
     <div
-      className="flex flex-col-reverse lg:flex-row items-center w-full max-w-6xl gap-6 relative"
+      className="flex flex-col-reverse lg:flex-row items-center lg:items-start w-full max-w-6xl gap-6 relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -132,27 +132,28 @@ const Gallery = ({ productImage }: { productImage: string[] }) => {
       </div>
 
       {/* Main Image with Zoom */}
-      <div className="w-full max-w-[400px] sm:max-w-[500px] lg:flex-1 flex justify-center">
-        <div
-          className="w-full aspect-[3/4] relative overflow-hidden rounded-lg shadow-xl"
-          onMouseMove={handleMouseMove}
-        >
-          {!isHovered ? (
-            <img
-              src={mainImage}
-              alt="product"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div
-              className="w-full h-full"
-              style={{
-                ...zoomStyle,
-              }}
-            />
-          )}
-        </div>
-      </div>
+      <div className="w-full max-w-[400px] sm:max-w-[500px] lg:flex-1 flex lg:items-center justify-center">
+  <div
+    className="w-full aspect-[3/4] relative overflow-hidden lg:mt-12 rounded-lg shadow-xl"
+    onMouseMove={handleMouseMove}
+  >
+    {!isHovered ? (
+      <img
+        src={mainImage}
+        alt="product"
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <div
+        className="w-full h-full"
+        style={{
+          ...zoomStyle,
+        }}
+      />
+    )}
+  </div>
+</div>
+
     </div>
   );
 };
