@@ -11,7 +11,6 @@ export const handlelog = async () => {
                 query: `
                     query {
                             userGETById {
-                                
                                 username
                                 email
                             }
@@ -243,8 +242,10 @@ export const userCart = async () => {
                     _id
                     name
                     description
+                    CountINStock
                     Price
                     images
+
                 }
                 quantityselect
                 sum
@@ -388,6 +389,7 @@ export const getfeaturedproduct = async () => {
               description
               Price
               images
+              CountINStock
               IsFeatured
               category{
               name}
@@ -423,6 +425,7 @@ export const getProducts = async () => {
               name
               description
               Price
+              CountINStock
               images
               IsFeatured
               category{

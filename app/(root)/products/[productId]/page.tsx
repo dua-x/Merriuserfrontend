@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
-import Gallery from "@/components/Gallery";
 import ClientReviews from "@/components/ClientReviews";
 import { getProductDetails, getCollectionDetails } from "@/lib/action";
 import ProductInfo from "@/components/ProductInfo";
@@ -56,7 +55,7 @@ const ProductDetails = ({ params }: { params: Promise<{ productId: string }> }) 
 
   return (
     <>
-      <div className="mx-auto flex justify-center items-start gap-16 py-4 px-6 lg:py-4 lg:px-16 lg:flex-row max-md:flex-col max-md:items-center">
+      <div className="mx-auto flex justify-center items-start gap-16 mt-12 py-4 px-6 lg:py-4 lg:px-16 lg:flex-row max-md:flex-col max-md:items-center">
         <ProductInfo productInfo={productDetails} />
       </div>
 
