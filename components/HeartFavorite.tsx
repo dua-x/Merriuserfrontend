@@ -24,7 +24,6 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                     return;
                 }
 
-                // Fetch wishlist from server
                 const response = await axios.post(
                     `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/wishlists/wishlistGET`,
                     {
@@ -38,14 +37,18 @@ const HeartFavorite = ({ product }: HeartFavoriteProps) => {
                     }
                 );
 
-                const wishlistItems = response.data.data?.wishlistGETByuser?.wishlist || [];
-                const wishlistProductIds = wishlistItems.map((item: { product?: { _id?: string } }) => item?.product?._id).filter(Boolean);
+                 const wishlistRaw = response.data.data?.wishlistGETByuser?.wishlist;
+            const wishlistItems = Array.isArray(wishlistRaw) ? wishlistRaw : [];
 
-                sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
-                setIsLiked(wishlistProductIds.includes(product._id));
-            } catch (err) {
-                console.error("[wishlist_CHECK]", err);
-            }
+            const wishlistProductIds = wishlistItems
+                .map((item: { product?: { _id?: string } }) => item?.product?._id)
+                .filter(Boolean);
+
+            sessionStorage.setItem("wishlist", JSON.stringify(wishlistProductIds));
+            setIsLiked(wishlistProductIds.includes(product._id));
+        } catch (err) {
+            console.error("[wishlist_CHECK]", err);
+        }
         };
 
         checkWishlist();

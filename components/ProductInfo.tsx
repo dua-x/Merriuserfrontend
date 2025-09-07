@@ -62,7 +62,7 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
 
   const handleAddToCart = async () => {
     if (selectedStock === 0) return;
-    const token = localStorage.getItem("authtoken"); // ou utiliser un cookie si stocké là
+    const token = localStorage.getItem("authtoken");
  
     if (!token) {
       setRequestMessage("Vous devez être connecté pour ajouter des articles à votre panier.");

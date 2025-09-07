@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { CircleUserRound, Search, Menu, ShoppingCart, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { handlelog, userCart } from '@/lib/action';
+import { handlelog, userCart,getSearchedProducts } from '@/lib/action';
 import { usePathname, useRouter } from 'next/navigation';
 import MeeriLogo from '@/components/MeeriLogo';
 import { Facebook, Instagram } from 'lucide-react';

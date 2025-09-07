@@ -13,7 +13,7 @@ interface ProductItem {
     _id: string;
     name: string;
     Price: number;
-    images: string;
+    images: string | string[];
   };
   quantityselect: number;
   color?: string;
@@ -552,26 +552,34 @@ const Checkout = () => {
       <div className="w-full lg:w-1/3 bg-[#a27a64]/10 border border-costum-beige p-6 rounded-lg">
         <h1 className="text-2xl mb-6">Order Summary</h1>
         <div className="space-y-4">
-          {cart?.ProductList?.map((cartItem: ProductItem) => (
-            <div key={cartItem.Productid._id} className="flex items-center gap-4 p-3 border-b">
-             <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
-                <Image
-                    src={cartItem.Productid.images[0] || "/placeholder.png"}
-                    alt="product"
-                    width={100}
-                    height={133} // keep ratio in metadata
-                    className="h-full w-full object-cover"
-                />
-                </div>
-              <div className="flex-1">
-                <p className="font-medium">{cartItem.Productid.name}</p>
-                {cartItem.color && <p className="text-sm">Color: {cartItem.color}</p>}
-                {cartItem.size && <p className="text-sm">Size: {cartItem.size}</p>}
-                <p className="text-sm">Qty: {cartItem.quantityselect}</p>
-              </div>
-              <p className="font-medium">{cartItem.Productid.Price * cartItem.quantityselect} DZD</p>
-            </div>
-          ))}
+           {cart?.ProductList?.map((cartItem: ProductItem) => {
+    const imageSrc = Array.isArray(cartItem.Productid.images)
+      ? cartItem.Productid.images[0]
+      : cartItem.Productid.images;
+
+    return (
+      <div key={cartItem.Productid._id} className="flex items-center gap-4 p-3 border-b">
+        <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
+          <Image
+            src={imageSrc || "/placeholder.png"}
+            alt="product"
+            width={100}
+            height={133}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="flex-1">
+          <p className="font-medium">{cartItem.Productid.name}</p>
+          {cartItem.color && <p className="text-sm">Color: {cartItem.color}</p>}
+          {cartItem.size && <p className="text-sm">Size: {cartItem.size}</p>}
+          <p className="text-sm">Qty: {cartItem.quantityselect}</p>
+        </div>
+        <p className="font-medium">
+          {cartItem.Productid.Price * cartItem.quantityselect} DZD
+        </p>
+      </div>
+    );
+  })}
         </div>
 
         <div className="mt-6 space-y-3">

@@ -4,7 +4,6 @@ import HeartFavorite from './HeartFavorite';
 
 const ProductCard = ({ product }: { product: ProductType }) => {
 const isOutOfStock = product.CountINStock !== undefined && product.CountINStock <= 0;
-console.log(product);
 
   return (
     <Link
