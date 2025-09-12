@@ -320,46 +320,57 @@ const OrderItem = ({
                 {expandedOrder === order._id && (
                     <div className="mt-4 border-t pt-4 flex flex-col gap-6">
                         <h3 className="font-semibold text-lg">Articles</h3>
-                        {order.orderitems.map((item, index) => (
-                            <div key={index} className="flex flex-col sm:flex-row gap-4 border-b pb-4">
-                                <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
-                                    <Image
-                                        src={item.product?.images[0] || "/placeholder.jpg"}
-                                        alt={item.product?.name || "Image produit"}
-                                        width={100}
-                                        height={100}
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-                                <div className="flex-grow">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                        <p>
-                                            <span className="font-semibold">Produit :</span>{" "}
-                                            {item.product?.name || "Produit inconnu"}
-                                        </p>
-                                        <p>
-                                            <span className="font-semibold">Prix unitaire :</span>{" "}
-                                            {item.product?.Price.toFixed(2)} DZA
-                                        </p>
-                                        <p>
-                                            <span className="font-semibold">Couleur :</span> {item.color}
-                                        </p>
-                                        {item.size && (
+                        {order.orderitems.map((item, index) => {
+                            // Safe access to product properties
+                            const productName = item.product?.name || "Produit inconnu";
+                            const productPrice = item.product?.Price || 0;
+                            const productImages = item.product?.images || [];
+                            
+                            const imageSrc = Array.isArray(productImages)
+                                ? productImages[0] || "/placeholder.png"
+                                : productImages || "/placeholder.png";
+                            
+                            return (
+                                <div key={index} className="flex flex-col sm:flex-row gap-4 border-b pb-4">
+                                    <div className="w-24 aspect-[3/4] overflow-hidden rounded-lg">
+                                        <Image
+                                            src={imageSrc}
+                                            alt={productName}
+                                            width={100}
+                                            height={133}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex-grow">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                             <p>
-                                                <span className="font-semibold">Taille :</span> {item.size}
+                                                <span className="font-semibold">Produit :</span>{" "}
+                                                {productName}
                                             </p>
-                                        )}
-                                        <p>
-                                            <span className="font-semibold">Quantité :</span> {item.quantity}
-                                        </p>
-                                        <p>
-                                            <span className="font-semibold">Sous-total :</span>{" "}
-                                            {item.priceproduct.toFixed(2)} DZA
-                                        </p>
+                                            <p>
+                                                <span className="font-semibold">Prix unitaire :</span>{" "}
+                                                {productPrice.toFixed(2)} DZA
+                                            </p>
+                                            <p>
+                                                <span className="font-semibold">Couleur :</span> {item.color || "Non spécifié"}
+                                            </p>
+                                            {item.size && (
+                                                <p>
+                                                    <span className="font-semibold">Taille :</span> {item.size}
+                                                </p>
+                                            )}
+                                            <p>
+                                                <span className="font-semibold">Quantité :</span> {item.quantity}
+                                            </p>
+                                            <p>
+                                                <span className="font-semibold">Sous-total :</span>{" "}
+                                                {item.priceproduct?.toFixed(2) || "0.00"} DZA
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                         
                         {/* Informations livraison */}
                         <div className="mt-4 pt-4 border-t">
@@ -382,5 +393,4 @@ const OrderItem = ({
         </div>
     );
 };
-
 export default Orders;

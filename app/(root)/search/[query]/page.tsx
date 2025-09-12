@@ -46,9 +46,13 @@ const SearchPage = async ({ params }: Omit<SearchPageProps, "searchParams">) => 
             <p className="text-gray-500 mb-6">
               Found {searchedProducts.length} result{searchedProducts.length !== 1 ? 's' : ''}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-2">
               {searchedProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
+                <div key={product._id} className="flex justify-center">
+                    <div className="max-w-[240px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+                        <ProductCard product={product} />
+                    </div>
+                </div>
               ))}
             </div>
           </>

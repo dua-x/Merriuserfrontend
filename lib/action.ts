@@ -146,7 +146,7 @@ export const getOrdersByUser = async () => {
     }
 };
 export const searchorderbyid = async (id: string) => {
-    try { // hadi get function machi post 
+    try { 
         const response = await axios.get(
             `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/orders/searchorderbyid/${id}`,
             
@@ -325,14 +325,15 @@ export const getSearchedProducts = async (query: string): Promise<ProductType[]>
       throw new Error('Invalid search query');
     }
 
-    const sanitizedQuery = query.replace(/"/g, '\\"');
+    // Properly encode the query for GraphQL
+    const encodedQuery = JSON.stringify(query);
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_IPHOST}/StoreAPI/products/productGET`,
       {
         query: `
           query {
-            productGETByPartialName(name: "${sanitizedQuery}") {
+            productGETByname(name: ${encodedQuery}) {
               _id
               name
               description
@@ -365,11 +366,13 @@ export const getSearchedProducts = async (query: string): Promise<ProductType[]>
       }
     );
 
-    if (!response.data?.data?.productGETByPartialName) {
-      throw new Error('Invalid response structure from API');
+    if (!response.data?.data?.productGETByname) {
+      console.warn('No products found or invalid response structure');
+      return [];
     }
-
-    return response.data.data.productGETByPartialName;
+    
+    console.log('Search results:', response.data.data.productGETByname);
+    return response.data.data.productGETByname;
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -537,6 +540,7 @@ export const getCollectionDetails = async (categoryId: string) => {
                             name
                             description
                             Price
+                            CountINStock
                             category{
                             name}
                             images
@@ -571,6 +575,7 @@ export const getWishListByUser = async () => {
                                 name
                                 description
                                 Price
+                                CountINStock
                                 category{
                                 name}
                                 images
