@@ -275,12 +275,20 @@ const OrderItem = ({
                             Statut :{" "}
                             <span
                                 className={`font-semibold ${
-                                    order.status === "delivered" ? "text-green-600" : 
-                                    order.status === "shipped" ? "text-blue-600" : "text-yellow-600"
+                                    order.status === "livré" ? "bg-green-100 text-green-800" :
+                                    order.status === "confirmé" ? "bg-blue-100 text-blue-800" :
+                                    order.status === "en livraison" ? "bg-yellow-100 text-yellow-800" :
+                                    order.status === "annulé" ? "bg-red-100 text-red-800" :
+                                    "bg-gray-100 text-gray-800"
                                 }`}
                             >
-                                {order.status === "delivered" ? "Livrée" : order.status === "shipped" ? "Expédiée" : "En cours"}
-                            </span>
+                                {order.status === "livré" ? "Livrée" :
+                                order.status === "confirmé" ? "Confirmée" :
+                                order.status === "annulé" ? "Annulée" :
+                                order.status === "en livraison" ? "En livraison" :
+                                "En cours"}
+                                                        
+                           </span>
                         </p>
                         <p className="text-sm">
                             Total :{" "}
