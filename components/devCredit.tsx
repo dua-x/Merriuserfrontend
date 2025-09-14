@@ -1,23 +1,25 @@
-import React from 'react'
+import React from 'react';
 
-const devCredit = () => {
+const DevCredit = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="text-center text-gray-300 text-sm md:text-base mt-8">
-    <p>
+      <p>
         Developed by{" "}
-        <a 
-            href="www.algerinet.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-white font-semibold hover:underline"
+        <a
+          href="https://www.instagram.com/algerinet/?next=%2Fp%2FDNaYqNcKZEk%2F"
+          target="_blank"
+          rel="noopener noreferrer"
+         aria-label="algerinet"
+          className="text-white font-semibold hover:underline"
         >
-            algerinet
+          algerinet
         </a>
-    </p>
-    <p>© {2025} Merri. All rights reserved.</p>
-</div>
+      </p>
+      <p>© {currentYear} Merri. All rights reserved.</p>
+    </div>
+  );
+};
 
-  )
-}
-
-export default devCredit
+export default DevCredit;

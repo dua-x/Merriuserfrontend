@@ -87,8 +87,8 @@ const ContactUs = () => {
               </div>
               <div className="flex items-center gap-2 md:gap-3">
                 <PhoneIcon className="w-5 md:w-6 h-5 md:h-6 text-white" />
-                <a href="tel:+213777777777" className="text-gray-300 text-sm md:text-base hover:underline">
-                  +213 777 777 777
+                <a href="tel:+213770090610" className="text-gray-300 text-sm md:text-base hover:underline">
+                  +213 770 09 0610
                 </a>
               </div>
               <div className="flex items-center gap-2 md:gap-3">

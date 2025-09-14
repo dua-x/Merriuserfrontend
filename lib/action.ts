@@ -371,7 +371,6 @@ export const getSearchedProducts = async (query: string): Promise<ProductType[]>
       return [];
     }
     
-    console.log('Search results:', response.data.data.productGETByname);
     return response.data.data.productGETByname;
   } catch (error) {
     console.error("Error fetching products:", error);

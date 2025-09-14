@@ -72,7 +72,6 @@ const Comment = ({ productid }: { productid: string }) => {
                 }
             );
 
-            console.log("Response:", response.data);
             setComment("");
             setRating(0);
         } catch (err: unknown) {
