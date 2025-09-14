@@ -30,7 +30,7 @@ openGraph: {
   description: "Élégance et Qualité pour Chaque Femme",
   images: [
     {
-      url: "https://meeristore.store/logo.png", // ✅ Full URL
+      url: "https://meeristore.store/logo.jpg", // ✅ Full URL
       width: 800,
       height: 600,
       alt: "MEERI Store Logo",
@@ -41,7 +41,7 @@ twitter: {
   card: "summary_large_image",
   title: "MEERI Store - Élégance et Qualité",
   description: "Découvrez nos collections exclusives de vêtements",
-  images: ["https://meeristore.store/logo.png"], // ✅ Full URL
+  images: ["https://meeristore.store/logo.jpg"], // ✅ Full URL
 },
   robots: {
     index: true,
@@ -61,8 +61,6 @@ twitter: {
   icons: {
     icon: [
       { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: [
       { url: '/apple-touch-icon.png' },
