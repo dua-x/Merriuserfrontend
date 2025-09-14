@@ -22,27 +22,27 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    type: "website",
-    locale: "fr_FR",
-    url: "https://meeristore.store",
-    siteName: "MEERI Store",
-    title: "MEERI Store - Élégance et Qualité",
-    description: "Élégance et Qualité pour Chaque Femme - Parce que chaque femme mérite de se sentir belle et confiante.",
-    images: [
-      {
-        url: "/logo.png",
-        width: 800,
-        height: 600,
-        alt: "MEERI Store Logo",
-      }
-    ]
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "MEERI Store - Élégance et Qualité",
-    description: "Découvrez nos collections exclusives de vêtements",
-    images: ["/logo.png"],
-  },
+  type: "website",
+  locale: "fr_FR",
+  url: "https://meeristore.store",
+  siteName: "MEERI Store",
+  title: "MEERI Store - Élégance et Qualité",
+  description: "Élégance et Qualité pour Chaque Femme - Parce que chaque femme mérite de se sentir belle et confiante.",
+  images: [
+    {
+      url: "https://meeristore.store/logo.png", // ✅ full URL
+      width: 800,
+      height: 600,
+      alt: "MEERI Store Logo",
+    }
+  ]
+},
+twitter: {
+  card: "summary_large_image",
+  title: "MEERI Store - Élégance et Qualité",
+  description: "Découvrez nos collections exclusives de vêtements",
+  images: ["https://meeristore.store/logo.png"], // ✅ full URL
+},
   robots: {
     index: true,
     follow: true,
